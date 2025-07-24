@@ -42,7 +42,7 @@ public:
 	bool autrePieceEnnemi(std::shared_ptr<Case> cas, Joueur joueur);
 	std::shared_ptr<Case> position_;
 	void afficherPos();
-	
+
 
 protected:
 	std::string characterBlanc_;

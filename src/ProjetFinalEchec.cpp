@@ -1,4 +1,4 @@
-﻿/**
+/**
 * TD6 Exceptions, espace de nom, variables de classe
 * \file   ProjetFinalEchec.cpp
 * \author Alexis LeBlanc et Zakaria Zair
@@ -184,11 +184,11 @@ void ProjetFinalEchec::miseEnJeu() {
             }
 
             if ((i + j) % 2 == 0) {
-                caseLabel->setStyleSheet("QLabel { background-color : gray }");
+                caseLabel->setStyleSheet("QLabel { background-color : burlywood }");
             }
 
             else {
-                caseLabel->setStyleSheet("QLabel { background-color : white }");
+                caseLabel->setStyleSheet("QLabel { background-color : beige }");
             }
             gridLayout->addWidget(caseLabel, j, i);
         }
@@ -269,9 +269,9 @@ void ProjetFinalEchec::couleurBoardNormal() {
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
             if ((i + j) % 2 == 0) {
-                arrayLabel[i][j]->setStyleSheet("QLabel { background-color : gray }");
+                arrayLabel[i][j]->setStyleSheet("QLabel { background-color : burlywood }");
             } else {
-                arrayLabel[i][j]->setStyleSheet("QLabel { background-color : white }");
+                arrayLabel[i][j]->setStyleSheet("QLabel { background-color : beige }");
             }
         }
     }

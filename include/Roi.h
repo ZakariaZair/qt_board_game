@@ -29,10 +29,9 @@ public:
 	virtual std::string avoirCharBlanc();
 	static int avoirCompteur() { return compteur_; }
 	virtual std::vector<std::shared_ptr<Case>> mouvementsValide(Jeux jeu, Joueur& joueur, Joueur& autreJoueur) override;
-	
+
 private:
 	std::string characterBlanc_;
 	std::string characterNoir_;
 	static int compteur_;
 };
-
