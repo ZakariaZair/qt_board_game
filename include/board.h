@@ -10,18 +10,11 @@
 
 #include "Case.h"
 #include <memory>
+#include "piece.h"
 
-namespace classejeux {
-	class Joueur;
-	class Piece;
-	class Jeux;
-	class Case;
-	class Cavalier;
-	class Roi;
-	class Tour;
-}
+using namespace classejeux;
 
-class classejeux::Jeux {
+class Jeux {
 public:
 	Jeux();
 	std::shared_ptr<Case> echiquier_[8][8];
