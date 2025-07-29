@@ -1,12 +1,4 @@
-/**
-* TD6 Exceptions, espace de nom, variables de classe
-* \file   ProjetFinalEchec.cpp
-* \author Alexis LeBlanc et Zakaria Zair
-* \date	21 avril 2022
-* Créé le 9 avril 2022
-*/
-
-#include "ProjetFinalEchec.h"
+#include "project.h"
 #include <iostream>
 #include <QtWidgets/QMainWindow>
 #include <QFontComboBox>

@@ -1,13 +1,3 @@
-/**
-* TD6 Exceptions, espace de nom, variables de classe
-* \file   Case.cpp
-* \author Alexis LeBlanc et Zakaria Zair
-* \date	21 avril 2022
-* Cree le 9 avril 2022
-*/
-
-#include "Case.h"
-
 classejeux::Case::Case() {
 	positionX_ = 0;
 	positionY_ = 0;

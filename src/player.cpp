@@ -1,14 +1,3 @@
-/**
-* TD6 Exceptions, espace de nom, variables de classe
-* \file   Joueur.cpp
-* \author Alexis LeBlanc et Zakaria Zair
-* \date	21 avril 2022
-* Cree le 9 avril 2022
-*/
-
-#include <iostream>
-#include <string>
-#include "Joueur.h"
 
 classejeux::Joueur::Joueur(std::string nom) {
 	nom_ = nom;
@@ -54,7 +43,7 @@ std::shared_ptr<classejeux::Case> classejeux::Joueur::avoirPosRoi() {
 	return nullptr;
 }
 
-bool classejeux::Joueur::roiEnEchec(Jeux jeu, Joueur adversaire, int x, int y) { // Roi en echec : 
+bool classejeux::Joueur::roiEnEchec(Jeux jeu, Joueur adversaire, int x, int y) { // Roi en echec :
 	if (adversaire.pieceTrouvee(x, y)) {
 		adversaire.retirerPiece(adversaire.pieceTrouvee(x, y));
 	}
@@ -88,7 +77,7 @@ bool classejeux::Joueur::echecMat(Jeux jeu, Joueur adversaire) {
 			}
 			i->avoirPosition()->changerX(xp);
 			i->avoirPosition()->changerY(yp);
-			
+
 		}
 
 	}

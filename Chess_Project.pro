@@ -14,24 +14,23 @@ INCLUDEPATH += .
 #DEFINES += QT_DISABLE_DEPRECATED_UP_TO=0x060000 # disables all APIs deprecated in Qt 6.0.0 and earlier
 
 # Input
-HEADERS += include/Case.h \
-           include/Cavalier.h \
-           include/Jeux.h \
-           include/Joueur.h \
-           include/Piece.h \
-           include/ProjetFinalEchec.h \
-           include/Roi.h \
-           include/Tour.h
-FORMS += ProjetFinalEchec.ui
-SOURCES += src/Case.cpp \
-           src/Cavalier.cpp \
-           src/Jeux.cpp \
-           src/Joueur.cpp \
-           src/main.cpp \
-           src/Piece.cpp \
-           src/ProjetFinalEchec.cpp \
-           src/Roi.cpp \
-           src/Tour.cpp
+HEADERS += include/board.h \
+           include/king.h \
+           include/knight.h \
+           include/piece.h \
+           include/player.h \
+           include/project.h \
+           include/rook.h \
+           include/square.h
+FORMS += project.ui
+SOURCES += include/board.cpp \
+           include/king.cpp \
+           include/knight.cpp \
+           include/piece.cpp \
+           include/player.cpp \
+           include/project.cpp \
+           include/rook.cpp \
+           include/square.cpp
 
 QT += widgets
 INCLUDEPATH += include/

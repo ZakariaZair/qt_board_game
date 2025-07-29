@@ -1,4 +1,4 @@
-# How to run ?
+# Compiling :
 `qmake -makefile chess_project.pro`
 
 `make`

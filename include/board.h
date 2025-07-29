@@ -1,22 +1,15 @@
-/**
-* TD6 Exceptions, espace de nom, variables de classe
-* \file   Jeux.h
-* \author Alexis LeBlanc et Zakaria Zair
-* \date	21 avril 2022
-* Créé le 9 avril 2022
-*/
-
 #pragma once
 
-#include "Case.h"
 #include <memory>
-#include "piece.h"
+#include "chess_definition.h"
 
-using namespace classejeux;
+namespace chess {
+    class Board {
+    public:
+       	Board();
+       	std::shared_ptr<Tile> getTile(int x, int y) const;
 
-class Jeux {
-public:
-	Jeux();
-	std::shared_ptr<Case> echiquier_[8][8];
-	std::shared_ptr<Case> avoirCase(int x, int y) const;
+    private:
+       	std::shared_ptr<Tile> board_[8][8];
 };
+}

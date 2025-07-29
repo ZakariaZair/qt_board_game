@@ -1,31 +1,21 @@
-/**
-* TD6 Exceptions, espace de nom, variables de classe
-* \file   ProjetFinalEchec.h
-* \author Alexis LeBlanc et Zakaria Zair
-* \date	21 avril 2022
-* Créé le 9 avril 2022
-*/
-
 #pragma once
 
 #include <QtWidgets/QMainWindow>
 #include <QtGui/QMouseEvent>
 #include <QLabel>
 #include <vector>
-#include "ui_ProjetFinalEchec.h"
-#include "Joueur.h"
-#include "Piece.h"
-#include "Cavalier.h"
-#include "Roi.h"
-#include "Tour.h"
+#include "ui_project.h"
+#include "chess_definition.h"
+using namespace chess;
 
-class ProjetFinalEchec : public QMainWindow
+
+class Project : public QMainWindow
 {
     Q_OBJECT
 
 public:
-
-    ProjetFinalEchec(classejeux::Joueur& joueurUn, classejeux::Joueur& joueurDeux, classejeux::Jeux jeuEchec, QWidget *parent = Q_NULLPTR);
+    Project(Player& playerWhite, Player& playerBlack, Board board, QWidget* parent = Q_NULLPTR);
+    ~Project();
     virtual void mousePressEvent(QMouseEvent* event) override;
     virtual void mouseReleaseEvent(QMouseEvent* event) override;
 
@@ -51,16 +41,11 @@ private slots:
 
 
 private:
-    classejeux::Joueur& j1;
-    classejeux::Joueur& j2;
-    classejeux::Jeux jeu;
-
-    bool jeuParti = false;
-
-    classejeux::Joueur* tourJoueur;
-    classejeux::Joueur* autreJoueur;
-    std::optional<std::pair<int, int>> caseCliquee;
+    Board* board = nullptr;
+    Player* playerWhite = nullptr;
+    Player* playerBlack = nullptr;
+    bool gameStarted = false;
+    std::optional<std::pair<int, int>> tileClicked;
     QLabel* arrayLabel[8][8];
-    int optionCompteur = 0;
     Ui::ProjetFinalEchecClass ui;
 };

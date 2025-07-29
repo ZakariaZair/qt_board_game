@@ -1,19 +1,3 @@
-﻿/**
-* TD6 Exceptions, espace de nom, variables de classe
-* \file   Piece.cpp
-* \author Alexis LeBlanc et Zakaria Zair
-* \date	21 avril 2022
-* Créé le 9 avril 2022
-*/
-
-#include <iostream>
-#include <algorithm>
-#include "Piece.h"
-#include "Joueur.h"
-#include "Jeux.h"
-#include "Cavalier.h"
-
-// Permet de placer les pièces 
 int classejeux::Piece::positionInitialeX = 0;
 int classejeux::Piece::positionInitialeY = 3;
 
@@ -44,7 +28,7 @@ bool classejeux::Piece::autrePieceAmis(std::shared_ptr<Case> cas, Joueur joueur)
 		int posX = piece->avoirPosition()->avoirPositionX();
 		int posY = piece->avoirPosition()->avoirPositionY();
 		if (posX == cas->avoirPositionX() && posY == cas->avoirPositionY()) {
-			return true; 
+			return true;
 		}
 
 		if (position_->avoirPositionY() == posY) {
@@ -52,7 +36,7 @@ bool classejeux::Piece::autrePieceAmis(std::shared_ptr<Case> cas, Joueur joueur)
 
 			else if (position_->avoirPositionX() > posX && cas->avoirPositionX() < posX) { return true; }
 		}
-		
+
 		if (position_->avoirPositionX() == posX) {
 			if (position_->avoirPositionY() < posY && cas->avoirPositionY() > posY) { return true; }
 

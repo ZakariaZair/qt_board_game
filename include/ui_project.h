@@ -1,5 +1,5 @@
 /********************************************************************************
-** Form generated from reading UI file 'ProjetFinalEchec.ui'
+** Form generated from reading UI file 'project.ui'
 **
 ** Created by: Qt User Interface Compiler version 6.9.1
 **

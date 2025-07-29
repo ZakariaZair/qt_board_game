@@ -1,14 +1,3 @@
-﻿/**
-* TD6 Exceptions, espace de nom, variables de classe
-* \file Cavalier.cpp
-* \author Alexis LeBlanc et Zakaria Zair
-* \date	21 avril 2022
-* Créé le 9 avril 2022
-*/
-
-#include "Cavalier.h"
-#include "Joueur.h"
-
 classejeux::Cavalier::Cavalier(const classejeux::Jeux& jeux) : Piece(jeux) {
 	characterBlanc_ = "♘";
 	characterNoir_ = "♞";
