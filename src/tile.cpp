@@ -1,25 +1,26 @@
-classejeux::Case::Case() {
-	positionX_ = 0;
-	positionY_ = 0;
+#include "tile.h"
+#include "chess_definition.h"
+using namespace chess;
+
+Tile::Tile() {
+	position_ = std::make_pair(0, 0);
+	label_ = new QLabel;
 }
 
-classejeux::Case::Case(int posX, int posY) {
-	positionX_ = posX;
-	positionY_ = posY;
+Tile::Tile(int x, int y) { position_ = std::make_pair(x, y); }
+
+std::pair<int, int> Tile::getPos() { return position_; }
+
+int Tile::getPosX() { return position_.first; }
+
+int Tile::getPosY() { return position_.second; }
+
+void Tile::setPos(int x, int y) {
+    position_.first = x;
+    position_.second = y;
 }
 
-int classejeux::Case::avoirPositionX() {
-	return positionX_;
-}
-
-int classejeux::Case::avoirPositionY() {
-	return positionY_;
-}
-
-void classejeux::Case::changerX(int x) {
-	positionX_ = x;
-}
-
-void classejeux::Case::changerY(int y) {
-	positionY_ = y;
+Tile::~Tile() {
+    delete label_;
+    label_ = nullptr;
 }
