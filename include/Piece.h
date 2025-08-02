@@ -12,18 +12,20 @@ namespace chess {
        	Piece();
        	Piece(const Board board);
        	virtual ~Piece() = default;
-       	static std::pair<int, int> initialPosition;
-       	std::shared_ptr<Tile> avoirPosition();
-       	bool estMangeable() { return edible_; }
-       	virtual std::string avoirChar() = 0;
-       	virtual std::vector<std::shared_ptr<Tile>> validMoves(Board jeu, Player& joueur, Player& autreJoueur) = 0;
-       	bool autrePieceAmis(std::shared_ptr<Tile> cas, Player joueur);
-       	bool autrePieceEnnemi(std::shared_ptr<Tile> cas, Player joueur);
-       	std::shared_ptr<Tile> position_;
-       	void afficherPos();
 
-    protected:
-       	std::string character_;
+       	virtual std::string getSymbol();
+       	virtual std::vector<std::shared_ptr<Tile>> validMoves(Board jeu, Player& joueur, Player& autreJoueur) = 0;
+       	std::shared_ptr<Tile> getTile();
+
+       	bool isEdible() { return edible_; }
+       	bool isFriend(std::shared_ptr<Tile> cas, Player joueur);
+       	bool isEnnemi(std::shared_ptr<Tile> cas, Player joueur);
+
+       	void showPosition();
+    private:
+        std::vector<std::pair<int, int>> directions_;
+        std::pair<int, int> position_;
+       	std::string symbol_;
        	bool edible_;
     };
 }

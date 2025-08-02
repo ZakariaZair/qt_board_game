@@ -10,10 +10,13 @@ namespace chess {
        	Tile();
        	Tile(int x, int y);
         ~Tile();
+
        	std::pair<int, int> getPos();
-        int getPosX();
-        int getPosY();
+        QLabel* getLabel();
+
        	void setPos(int x, int y);
+        void setLabel(QLabel* label);
+
     private:
        	std::pair<int, int> position_;
         QLabel* label_;

@@ -8,9 +8,8 @@ namespace chess {
     class Knight : public Piece {
     public:
     	Knight(const Board& jeux);
-    	virtual std::string avoirChar() override;
-    	virtual std::vector<std::shared_ptr<Tile>> mouvementsValide(Board jeu, Joueur& joueur, Joueur& autreJoueur) override;
-
+    	virtual std::string getSymbol() override;
+    	virtual std::vector<std::shared_ptr<Tile>> validMoves(Board jeu, Player& joueur, Player& autreJoueur) override;
     private:
     	std::string characterBlanc_;
     	std::string characterNoir_;

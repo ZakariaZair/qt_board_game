@@ -52,7 +52,7 @@ public:
 
     void retranslateUi(QMainWindow *ProjetFinalEchecClass)
     {
-        ProjetFinalEchecClass->setWindowTitle(QCoreApplication::translate("ProjetFinalEchecClass", "ProjetFinalEchec", nullptr));
+        ProjetFinalEchecClass->setWindowTitle(QCoreApplication::translate("ProjetFinalEchecClass", "Project", nullptr));
     } // retranslateUi
 
 };

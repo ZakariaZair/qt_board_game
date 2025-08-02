@@ -2,19 +2,24 @@
 
 #include <QtWidgets/QMainWindow>
 #include <QtGui/QMouseEvent>
-#include <QLabel>
+#include <memory>
 #include <vector>
 #include "ui_project.h"
 #include "chess_definition.h"
 using namespace chess;
 
+enum LobbyOption {
+    DEFAULT = 0,
+    RANDOM = 1,
+    ENDGAME = 2
+};
 
 class Project : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    Project(Player& playerWhite, Player& playerBlack, Board board, QWidget* parent = Q_NULLPTR);
+    Project(QWidget* parent = Q_NULLPTR);
     ~Project();
     virtual void mousePressEvent(QMouseEvent* event) override;
     virtual void mouseReleaseEvent(QMouseEvent* event) override;
@@ -22,30 +27,26 @@ public:
     void couleurBoardNormal();
     void couleurBoardEchec();
 
-
     void option1();
     void option2();
     void option3();
     void option();
 
 private slots:
-    void miseEnJeu();
-
-    void stopJeu();
-
-    void miseEnMenu();
-
-    void changeOption1();
-    void changeOption2();
-    void changeOption3();
-
+    void setUp();
+    void start();
+    void stop();
+    void changeOption(int in);
 
 private:
-    Board* board = nullptr;
-    Player* playerWhite = nullptr;
-    Player* playerBlack = nullptr;
-    bool gameStarted = false;
-    std::optional<std::pair<int, int>> tileClicked;
-    QLabel* arrayLabel[8][8];
+    std::vector<std::shared_ptr<Tile>> board_;
+    std::shared_ptr<Player> playerWhite_;
+    std::shared_ptr<Player> playerBlack_;
+    std::vector<std::shared_ptr<Piece>> piecesWhite_;
+    std::vector<std::shared_ptr<Piece>> piecesBlack_;
+    int lobbyOption_ = LobbyOption::DEFAULT;
+    bool gameStarted_ = false;
+    std::optional<std::pair<int, int>> tileClicked_;
+
     Ui::ProjetFinalEchecClass ui;
 };

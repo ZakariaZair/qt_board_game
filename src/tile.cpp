@@ -7,20 +7,22 @@ Tile::Tile() {
 	label_ = new QLabel;
 }
 
+Tile::~Tile() {
+    delete label_;
+    label_ = nullptr;
+}
+
 Tile::Tile(int x, int y) { position_ = std::make_pair(x, y); }
 
 std::pair<int, int> Tile::getPos() { return position_; }
 
-int Tile::getPosX() { return position_.first; }
-
-int Tile::getPosY() { return position_.second; }
+QLabel* Tile::getLabel() { return label_; }
 
 void Tile::setPos(int x, int y) {
     position_.first = x;
     position_.second = y;
 }
 
-Tile::~Tile() {
-    delete label_;
-    label_ = nullptr;
+void Tile::setLabel(QLabel* label) {
+    label_ = label;
 }

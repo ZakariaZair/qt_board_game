@@ -1,6 +1,5 @@
-#include "project.h"
-#include <iostream>
-#include <QtWidgets/QMainWindow>
+// QT Lib
+#include <QMainWindow>
 #include <QFontComboBox>
 #include <QGridLayout>
 #include <QPushButton>
@@ -13,219 +12,176 @@
 #include <QMessageBox>
 #include <QBoxLayout>
 
+// C++ Lib
+#include <iostream>
+#include <memory>
+#include <utility>
+#include <vector>
+
+// ../include path
+#include "project.h"
+#include "player.h"
+#include "piece.h"
+#include "king.h"
+#include "knight.h"
+#include "rook.h"
+#include "tile.h"
 
 
-// Question 1
-namespace interfacegraphique {
-    int policeCaractere = 30;
-    int espaceEntreCase = 0;
-    int tailleFenetre = 700;
+namespace graphicsInterface {
+    int policeCharacter = 30;
+    int spaceBetweenTiles = 0;
+    std::pair<int, int> sizeWindow(400, 300);
+    int sizeGameWidget = 1000; // square format, size_x = size_y
+    int nTiles = 8;
 }
+namespace gi = graphicsInterface;
 
-namespace ig = interfacegraphique;
-
-ProjetFinalEchec::ProjetFinalEchec(classejeux::Joueur& joueurUn, classejeux::Joueur& joueurDeux, classejeux::Jeux jeuEchec, QWidget* parent)
-    : QMainWindow(parent), j1(joueurUn), j2(joueurDeux), tourJoueur(&j1), autreJoueur(&j2), jeu(jeuEchec)
+Project::Project(QWidget* parent) : QMainWindow(parent)
 {
-    miseEnMenu();
+    setUp();
+    // Create objects
+    for (int i = 0; i < (gi::nTiles^2); i++) {
+        Tile tile = Tile(floor((float)i/gi::nTiles), i%gi::nTiles);
+        board_.push_back(std::make_shared<Tile>(tile));
+    }
+    playerWhite_ = std::make_shared<Player>(Player());
+    playerBlack_ = std::make_shared<Player>(Player());
+    piecesWhite_ = {
+        std::make_shared<King>(King()),
+        // std::make_shared<Knight>(),
+        // std::make_shared<Rook>(),
+    };
+    piecesBlack_ = {
+        std::make_shared<King>(King()),
+        // std::make_shared<Knight>(),
+        // std::make_shared<Rook>(),
+    };
+    // Share objects inside classes
+
 
 };
 
-void ProjetFinalEchec::miseEnMenu() {
+void Project::setUp() {
     QWidget* menu = new QWidget;
-    QMainWindow::setFixedSize(400, 300);
-    menu->setFixedSize(400, 300);
+    QMainWindow::setFixedSize(gi::sizeWindow.first, gi::sizeWindow.second);
+    menu->setFixedSize(gi::sizeWindow.first, gi::sizeWindow.second);
     QPushButton* startButton = new QPushButton(menu);
     startButton->setText(tr("Appuyer pour démarrer la partie"));
 
-
     QVBoxLayout* buttons = new QVBoxLayout(menu);
     buttons->addWidget(startButton);
-    QRadioButton* option1 = new QRadioButton(menu);
-    option1->setText(tr("Normal"));
     startButton->setFixedHeight(50);
+
+    QRadioButton* option1 = new QRadioButton(menu);
+    option1->setText(tr("Default"));
     buttons->addWidget(option1);
-    QRadioButton* option2 = new QRadioButton(menu);
-    option2->setText(tr("Eparpillé"));
-    buttons->addWidget(option2);
-    QRadioButton* option3 = new QRadioButton(menu);
-    option3->setText(tr("Presque en echec"));
-    buttons->addWidget(option3);
+    // QRadioButton* option2 = new QRadioButton(menu);
+    // option2->setText(tr("Random"));
+    // buttons->addWidget(option2);
+    // QRadioButton* option3 = new QRadioButton(menu);
+    // option3->setText(tr("Endgame"));
+    // buttons->addWidget(option3);
 
     connect(option1, SIGNAL(pressed()), this, SLOT(changeOption1()));
-    connect(option2, SIGNAL(pressed()), this, SLOT(changeOption2()));
-    connect(option3, SIGNAL(pressed()), this, SLOT(changeOption3()));
-    connect(startButton, SIGNAL(pressed()), this, SLOT(miseEnJeu()));
+    // connect(option2, SIGNAL(pressed()), this, SLOT(changeOption2()));
+    // connect(option3, SIGNAL(pressed()), this, SLOT(changeOption3()));
+    connect(startButton, SIGNAL(pressed()), this, SLOT(start()));
 
     setCentralWidget(menu);
 };
 
-void ProjetFinalEchec::option() {
-    if (optionCompteur == 1) {
+void Project::changeOption(int in) {
+    lobbyOption_ = in;
+}
+
+void Project::option() {
+    if (lobbyOption_ == LobbyOption::DEFAULT) {
         option1();
     }
-    if (optionCompteur == 2) {
-        option2();
-    }
-    if (optionCompteur == 3) {
-        option3();
-    }
 }
 
-void ProjetFinalEchec::changeOption1() {
-    optionCompteur = 1;
-}
-void ProjetFinalEchec::changeOption2() {
-    optionCompteur = 2;
-}
-void ProjetFinalEchec::changeOption3() {
-    optionCompteur = 3;
+void Project::option1() {
+
 }
 
-void ProjetFinalEchec::option1() {
-
-
-    classejeux::Piece::positionInitialeX = 6;
-    classejeux::Piece::positionInitialeY = 7;
-    j1.ajouterPiece(std::make_shared<classejeux::Cavalier>(classejeux::Cavalier(jeu)));
-    classejeux::Piece::positionInitialeX = 7;
-    classejeux::Piece::positionInitialeY = 7;
-    j1.ajouterPiece(std::make_shared<classejeux::Tour>(classejeux::Tour(jeu)));
-    classejeux::Piece::positionInitialeX = 7;
-    classejeux::Piece::positionInitialeY = 0;
-    j1.ajouterPiece(std::make_shared<classejeux::Roi>(classejeux::Roi(jeu)));
-    classejeux::Piece::positionInitialeX = 4;
-    classejeux::Piece::positionInitialeY = 3;
-    j2.ajouterPiece(std::make_shared<classejeux::Cavalier>(classejeux::Cavalier(jeu)));
-    classejeux::Piece::positionInitialeX = 1;
-    classejeux::Piece::positionInitialeY = 1;
-    j2.ajouterPiece(std::make_shared<classejeux::Tour>(classejeux::Tour(jeu)));
-    classejeux::Piece::positionInitialeX = 2;
-    classejeux::Piece::positionInitialeY = 7;
-    j2.ajouterPiece(std::make_shared<classejeux::Roi>(classejeux::Roi(jeu)));
-}
-void ProjetFinalEchec::option2() {
-    classejeux::Piece::positionInitialeX = 7;
-    classejeux::Piece::positionInitialeY = 7;
-    j1.ajouterPiece(std::make_shared<classejeux::Cavalier>(classejeux::Cavalier(jeu)));
-    classejeux::Piece::positionInitialeX = 4;
-    classejeux::Piece::positionInitialeY = 2;
-    j1.ajouterPiece(std::make_shared<classejeux::Tour>(classejeux::Tour(jeu)));
-    classejeux::Piece::positionInitialeX = 5;
-    classejeux::Piece::positionInitialeY = 1;
-    j1.ajouterPiece(std::make_shared<classejeux::Roi>(classejeux::Roi(jeu)));
-    classejeux::Piece::positionInitialeX = 3;
-    classejeux::Piece::positionInitialeY = 7;
-    j2.ajouterPiece(std::make_shared<classejeux::Cavalier>(classejeux::Cavalier(jeu)));
-    classejeux::Piece::positionInitialeX = 2;
-    classejeux::Piece::positionInitialeY = 7;
-    j2.ajouterPiece(std::make_shared<classejeux::Tour>(classejeux::Tour(jeu)));
-    classejeux::Piece::positionInitialeX = 2;
-    classejeux::Piece::positionInitialeY = 6;
-    j2.ajouterPiece(std::make_shared<classejeux::Roi>(classejeux::Roi(jeu)));
-}
-void ProjetFinalEchec::option3() {
-    classejeux::Piece::positionInitialeX = 5;
-    classejeux::Piece::positionInitialeY = 5;
-    j1.ajouterPiece(std::make_shared<classejeux::Cavalier>(classejeux::Cavalier(jeu)));
-    classejeux::Piece::positionInitialeX = 4;
-    classejeux::Piece::positionInitialeY = 0;
-    j1.ajouterPiece(std::make_shared<classejeux::Tour>(classejeux::Tour(jeu)));
-    classejeux::Piece::positionInitialeX = 5;
-    classejeux::Piece::positionInitialeY = 0;
-    j1.ajouterPiece(std::make_shared<classejeux::Roi>(classejeux::Roi(jeu)));
-    classejeux::Piece::positionInitialeX = 5;
-    classejeux::Piece::positionInitialeY = 7;
-    j2.ajouterPiece(std::make_shared<classejeux::Cavalier>(classejeux::Cavalier(jeu)));
-    classejeux::Piece::positionInitialeX = 3;
-    classejeux::Piece::positionInitialeY = 7;
-    j2.ajouterPiece(std::make_shared<classejeux::Tour>(classejeux::Tour(jeu)));
-    classejeux::Piece::positionInitialeX = 2;
-    classejeux::Piece::positionInitialeY = 7;
-    j2.ajouterPiece(std::make_shared<classejeux::Roi>(classejeux::Roi(jeu)));
-}
-
-void ProjetFinalEchec::miseEnJeu() {
-
+void Project::start() {
     option();
-    jeuParti = true;
-    QMainWindow::setFixedSize(ig::tailleFenetre, ig::tailleFenetre);
+    QMainWindow::setFixedSize(gi::sizeGameWidget, gi::sizeGameWidget);
     QWidget* prinFenetre = new QWidget;
-    prinFenetre->setFixedSize(ig::tailleFenetre, ig::tailleFenetre);
+    prinFenetre->setFixedSize(gi::sizeGameWidget, gi::sizeGameWidget);
     QGridLayout* gridLayout = new QGridLayout;
+    gridLayout->setSpacing(gi::spaceBetweenTiles);
 
-    gridLayout->setSpacing(ig::espaceEntreCase);
+    for (int i = 0; i < (gi::nTiles^2); i++) {
+        int x = floor((float)i/gi::nTiles), y = (i%gi::nTiles);
 
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
-            QLabel* caseLabel = new QLabel();
-            arrayLabel[i][j] = caseLabel;
-            caseLabel->setAlignment(Qt::AlignCenter);
+        QLabel* tileLabel = new QLabel();
+        QFont qfont("Times", gi::policeCharacter);
+        board_[i]->setLabel(tileLabel);
+        tileLabel->setFont(qfont);
+        tileLabel->setAlignment(Qt::AlignCenter);
 
-            QFont qfont("Times", ig::policeCaractere);
-            caseLabel->setFont(qfont);
-
-            std::shared_ptr<classejeux::Piece> pieceJ1 = j1.pieceTrouvee(i, j);
-            if (pieceJ1) {
-                caseLabel->setText(QString::fromStdString(pieceJ1->avoirCharBlanc()));
-            }
-
-            std::shared_ptr<classejeux::Piece> pieceJ2 = j2.pieceTrouvee(i, j);
-            if (j2.pieceTrouvee(i, j)) {
-                caseLabel->setText(QString::fromStdString(pieceJ2->avoirCharNoir()));
-            }
-
-            if ((i + j) % 2 == 0) {
-                caseLabel->setStyleSheet("QLabel { background-color : burlywood }");
-            }
-
-            else {
-                caseLabel->setStyleSheet("QLabel { background-color : beige }");
-            }
-            gridLayout->addWidget(caseLabel, j, i);
+        std::shared_ptr<Piece> pieceJ1 = j1.pieceTrouvee(i, j);
+        if (pieceJ1) {
+            tileLabel->setText(QString::fromStdString(pieceJ1->avoirCharBlanc()));
         }
+
+        std::shared_ptr<Piece> pieceJ2 = j2.pieceTrouvee(i, j);
+        if (j2.pieceTrouvee(i, j)) {
+            tileLabel->setText(QString::fromStdString(pieceJ2->avoirCharNoir()));
+        }
+
+        if ((x + y) % 2 == 0) {
+            tileLabel->setStyleSheet("QLabel { background-color : burlywood }");
+        }
+        else {
+            tileLabel->setStyleSheet("QLabel { background-color : beige }");
+        }
+
+        gridLayout->addWidget(tileLabel, y, x);
     }
 
     prinFenetre->setLayout(gridLayout);
     setCentralWidget(prinFenetre);
 };
 
-void ProjetFinalEchec::mousePressEvent(QMouseEvent* event) {
+void Project::mousePressEvent(QMouseEvent* event) {
     int tailleCaseX = width();
     int tailleCaseY = height();
 
-    int x = ceil(event->x() / (tailleCaseX / 8)); // numero de la case
+    int x = ceil(event->x() / (tailleCaseX / 8));
     int y = ceil(event->y() / (tailleCaseY / 8));
 
-    if (caseCliquee) {
-        if (caseCliquee->first == x && caseCliquee->second == y) {  // Cliquer sur lui meme
-            caseCliquee.reset();
+    if (tileClicked_) {
+        if (tileClicked_->first == x && tileClicked_->second == y) {  // Cliquer sur lui meme
+            tileClicked_.reset();
             couleurBoardNormal();
 
         }
         else {
-            for (auto&& caseVal : tourJoueur->pieceTrouvee(caseCliquee->first, caseCliquee->second)->mouvementsValide(jeu, *tourJoueur, *autreJoueur)) {
+            for (auto&& caseVal : tourJoueur->pieceTrouvee(tileClicked_->first, tileClicked_->second)->mouvementsValide(jeu, *tourJoueur, *autreJoueur)) {
                 if (caseVal->avoirPositionX() == x && caseVal->avoirPositionY() == y) { // Si position valide == position clic
-                    tourJoueur->modifierPosition(x, y, caseCliquee->first, caseCliquee->second);
+                    tourJoueur->modifierPosition(x, y, tileClicked_->first, tileClicked_->second);
                     if (tourJoueur->roiEnEchec(jeu, *autreJoueur, x, y)) {
                         std::cout << "ECHEC !!!" << std::endl;
-                        tourJoueur->modifierPosition(caseCliquee->first, caseCliquee->second, x, y);
+                        tourJoueur->modifierPosition(tileClicked_->first, tileClicked_->second, x, y);
                         couleurBoardNormal();
                         couleurBoardEchec();
-                        caseCliquee.reset();
+                        tileClicked_.reset();
                         break;
                     }
 
                     couleurBoardNormal();
 
-                    arrayLabel[caseCliquee->first][caseCliquee->second]->setText(" "); // Met au tireur Texte Vide
+                    arrayLabel[tileClicked_->first][tileClicked_->second]->setText(" "); // Met au tireur Texte Vide
 
-                    tourJoueur->modifierPosition(x, y, caseCliquee->first, caseCliquee->second); // Modifie position de la piece vers cible
+                    tourJoueur->modifierPosition(x, y, tileClicked_->first, tileClicked_->second); // Modifie position de la piece vers cible
                     if (tourJoueur == &j1) {
                         if (j2.pieceTrouvee(x, y)) {
                             j2.retirerPiece(j2.pieceTrouvee(x, y));
                         }
-                        std::shared_ptr<classejeux::Piece> pieceJ1 = j1.pieceTrouvee(x, y);
+                        std::shared_ptr<Piece> pieceJ1 = j1.pieceTrouvee(x, y);
                         arrayLabel[x][y]->setText(QString::fromStdString(pieceJ1->avoirCharBlanc()));
                         tourJoueur = &j2;
                         autreJoueur = &j1;
@@ -234,12 +190,12 @@ void ProjetFinalEchec::mousePressEvent(QMouseEvent* event) {
                         if (j1.pieceTrouvee(x, y)) {
                             j1.retirerPiece(j1.pieceTrouvee(x, y));
                         }
-                        std::shared_ptr<classejeux::Piece> pieceJ2 = j2.pieceTrouvee(x, y);
+                        std::shared_ptr<Piece> pieceJ2 = j2.pieceTrouvee(x, y);
                         arrayLabel[x][y]->setText(QString::fromStdString(pieceJ2->avoirCharNoir()));
                         tourJoueur = &j1;
                         autreJoueur = &j2;
                     }
-                    caseCliquee.reset();
+                    tileClicked_.reset();
                 }
             }
         }
@@ -247,17 +203,16 @@ void ProjetFinalEchec::mousePressEvent(QMouseEvent* event) {
     }
     else {
         if (tourJoueur->pieceTrouvee(x, y)) {
-            caseCliquee = { x, y };
+            tileClicked_ = { x, y };
             for (auto caseVal : tourJoueur->pieceTrouvee(caseCliquee->first, caseCliquee->second)->mouvementsValide(jeu, *tourJoueur, *autreJoueur)) {
                 arrayLabel[caseVal->avoirPositionX()][caseVal->avoirPositionY()]->setStyleSheet("QLabel { background-color: yellow}");
                 arrayLabel[caseVal->avoirPositionX()][caseVal->avoirPositionY()]->setStyleSheet("QLabel { border: 3px solid yellow;}");
             }
         }
     }
-
 }
 
-void ProjetFinalEchec::couleurBoardNormal() {
+void Project::couleurBoardNormal() {
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
             if ((i + j) % 2 == 0) {
@@ -270,7 +225,7 @@ void ProjetFinalEchec::couleurBoardNormal() {
 }
 
 
-void ProjetFinalEchec::couleurBoardEchec() {
+void Project::couleurBoardEchec() {
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
             auto k = tourJoueur->avoirPosRoi();
@@ -282,7 +237,7 @@ void ProjetFinalEchec::couleurBoardEchec() {
     }
 }
 
-void ProjetFinalEchec::mouseReleaseEvent(QMouseEvent* event) {
+void Project::mouseReleaseEvent(QMouseEvent* event) {
     int tailleCaseX = width();
     int tailleCaseY = height();
 
@@ -295,10 +250,9 @@ void ProjetFinalEchec::mouseReleaseEvent(QMouseEvent* event) {
             stopJeu();
         }
     }
-
 };
 
-void ProjetFinalEchec::stopJeu() {
+void Project::stopJeu() {
 
     jeuParti = false;
 

@@ -1,6 +1,13 @@
-int classejeux::Roi::compteur_ = 0;
+#include "king.h"
+#include "board.h"
+#include "chess_definition.h"
+using namespace chess;
 
-classejeux::Roi::Roi(const classejeux::Jeux jeux) : Piece(jeux) {
+
+int King::count_ = 0;
+int King::maxCount_ = 2;
+
+King::King(const Board board) : Piece(board) {
 	// Question 2
 	if (compteur_ >= 2)
 		throw std::logic_error("Plus de deux roi!");

@@ -1,7 +1,4 @@
-int classejeux::Piece::positionInitialeX = 0;
-int classejeux::Piece::positionInitialeY = 3;
 
-classejeux::Piece::Piece() {;}
 
 classejeux::Piece::Piece(const Jeux& jeux) {
 	for (int i = 0; i < 8; i++) {
