@@ -18,6 +18,7 @@ namespace chess {
         Color getColor();
 
         bool inOfBounds(std::pair<int, int> move);
+        bool isEnemy(std::unique_ptr<Piece>& piece);
 
     protected:
         std::vector<std::pair<int, int>> directions_;

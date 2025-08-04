@@ -146,8 +146,10 @@ void Project::mousePressEvent(QMouseEvent* event) {
     switch (manager_->getState()) {
         case ClickState::NOTHING:
             manager_->selectTile(board_, {clicX, clicY});
+            break;
         case ClickState::TILESELECTED:
-            ;
+            manager_->movePiece(board_, {clicX, clicY});
+            break;
     }
 
     // if (tileClicked_) {

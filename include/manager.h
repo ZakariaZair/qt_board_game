@@ -11,8 +11,8 @@ namespace chess {
     public:
        	Manager(std::map<Color, std::string> players);
         void addPieceToTile(int x, int y, std::unique_ptr<Piece>& piece, Tiles tiles);
-        void selectTile(Tiles board, std::pair<int, int> pos);
-        void checkSelectedTile();
+        void selectTile(Tiles board, std::pair<int, int> clic);
+        void movePiece(Tiles board, std::pair<int, int> clic);
        	// std::shared_ptr<Piece> pieceTrouvee(int x, int y);
        	// void modifierPosition(int nouveauX, int nouveauY, int ancienX, int ancienY);
        	// bool roiEnEchec(int x, int y);

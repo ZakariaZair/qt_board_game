@@ -6,7 +6,7 @@ using namespace chess;
 Tile::Tile() {
 	position_ = std::make_pair(-1, -1);
 	label_ = new QLabel;
-    QFont qfont("Times", 60);
+    QFont qfont("Times New Roman", 60);
     label_->setFont(qfont);
     label_->setAlignment(Qt::AlignCenter);
 }
@@ -32,7 +32,6 @@ void Tile::setLabel(QLabel* label) {
 
 void Tile::setPieceAtTile(std::unique_ptr<Piece>& piece) {
     pieceAtTile_ = std::move(piece);
-    label_->setText(QString::fromStdString(pieceAtTile_->getSymbol()));
     refreshRepresentation();
 }
 
@@ -42,8 +41,10 @@ std::unique_ptr<Piece>& Tile::getPieceAtTile() {
 
 void Tile::refreshRepresentation() {
     std::string colorStyle = "color: ";
+    label_->setText(QString::fromStdString(""));
     if (pieceAtTile_) {
         colorStyle += pieceAtTile_->getColor() == Color::WHITE ? "white;" : "black;";
+        label_->setText(QString::fromStdString(pieceAtTile_->getSymbol()));
     }
     (position_.first + position_.second) % 2 == 0 ?
     label_->setStyleSheet(QString::fromStdString("background-color: burlywood;" + colorStyle)):
@@ -55,5 +56,16 @@ void Tile::validMoveRepresentation() {
     if (pieceAtTile_) {
         colorStyle += pieceAtTile_->getColor() == Color::WHITE ? "white;" : "black;";
     }
-    label_->setStyleSheet(QString::fromStdString("background-color: yellow;" + colorStyle));
+    label_->setStyleSheet(QString::fromStdString("background-color: gold;" + colorStyle));
+}
+
+void Tile::selectedRepresentation() {
+    std::string colorStyle = "color: ";
+    if (pieceAtTile_) {
+        colorStyle += pieceAtTile_->getColor() == Color::WHITE ? "white;" : "black;";
+    }
+    std::string borderStyle = "border-style: outset; border-width: 5px; border-color: gold;";
+    (position_.first + position_.second) % 2 == 0 ?
+    label_->setStyleSheet(QString::fromStdString("background-color: burlywood;" + borderStyle + colorStyle)):
+    label_->setStyleSheet(QString::fromStdString("background-color: beige;" + borderStyle + colorStyle));
 }

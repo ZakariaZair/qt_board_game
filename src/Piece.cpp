@@ -1,3 +1,4 @@
+#include <iostream>
 #include "piece.h"
 #include "tile.h"
 #include "chess_definition.h"
@@ -19,24 +20,23 @@ directions_({}) {
 Tiles Piece::getValidMoves(Tiles board, std::pair<int,int> pos) {
     Tiles validTiles = {};
     for (std::pair<int, int> direction : directions_) {
-        pos.first += direction.first*8;
-        pos.second += direction.second;
-        bool accepted = inOfBounds(pos)
-            && board[pos.first*8+pos.second]
-            && board[pos.first*8+pos.second]->getPieceAtTile() == nullptr;
+        std::pair<int, int> move = pos;
+        move.first += direction.first;
+        move.second += direction.second;
+        bool accepted = inOfBounds(move)
+            && (board[move.first*8+move.second]->getPieceAtTile() == nullptr
+            || isEnemy(board[move.first*8+move.second]->getPieceAtTile()));
         if (isMoveRepetitive_) {
-            // while
-            while(accepted) {
-                validTiles.push_back(board[pos.first*8+pos.second]);
-                pos.first += direction.first*8;
-                pos.second += direction.second;
-                accepted = inOfBounds(pos)
-                    && board[pos.first*8+pos.second]
-                    && board[pos.first*8+pos.second]->getPieceAtTile() == nullptr;
+            while (accepted) {
+                validTiles.push_back(board[move.first*8+move.second]);
+                move.first += direction.first;
+                move.second += direction.second;
+                accepted = inOfBounds(move)
+                    && (board[move.first*8+move.second]->getPieceAtTile() == nullptr
+                    || isEnemy(board[move.first*8+move.second]->getPieceAtTile()));
             }
         } else {
-            // no while
-            if (accepted) validTiles.push_back(board[pos.first*8+pos.second]);
+            if (accepted) validTiles.push_back(board[move.first*8+move.second]);
         }
     }
     return validTiles;
@@ -54,49 +54,6 @@ bool Piece::inOfBounds(std::pair<int,int> move) {
     return 0 <= move.first && move.first < 8 && 0 <= move.second && move.second < 8;
 }
 
-// bool Piece::autrePieceAmis(std::shared_ptr<Tile> cas, Player joueur) {
-// 	for (auto&& piece : joueur.avoirPieces()) {
-// 		int posX = piece->avoirPosition()->avoirPositionX();
-// 		int posY = piece->avoirPosition()->avoirPositionY();
-// 		if (posX == cas->avoirPositionX() && posY == cas->avoirPositionY()) {
-// 			return true;
-// 		}
-
-// 		if (position_->avoirPositionY() == posY) {
-// 			if (position_->avoirPositionX() < posX && cas->avoirPositionX() > posX) { return true; }
-
-// 			else if (position_->avoirPositionX() > posX && cas->avoirPositionX() < posX) { return true; }
-// 		}
-
-// 		if (position_->avoirPositionX() == posX) {
-// 			if (position_->avoirPositionY() < posY && cas->avoirPositionY() > posY) { return true; }
-
-// 			else if (position_->avoirPositionY() > posY && cas->avoirPositionY() < posY) { return true; }
-// 		}
-// 	}
-// 	return false;
-// }
-
-// bool classejeux::Piece::autrePieceEnnemi(std::shared_ptr<Case> cas, Joueur joueur) {
-// 	for (auto&& piece : joueur.avoirPieces()) {
-// 		int posX = piece->avoirPosition()->avoirPositionX();
-// 		int posY = piece->avoirPosition()->avoirPositionY();
-
-// 		if (posX == cas->avoirPositionX() && posY == cas->avoirPositionY()) {
-// 			return false;
-// 		}
-
-// 		if (position_->avoirPositionY() == posY) {
-// 			if (position_->avoirPositionX() < posX && cas->avoirPositionX() > posX) { return true; }
-
-// 			else if (position_->avoirPositionX() > posX && cas->avoirPositionX() < posX) { return true; }
-// 		}
-
-// 		if (position_->avoirPositionX() == posX) {
-// 			if (position_->avoirPositionY() < posY && cas->avoirPositionY() > posY) { return true; }
-
-// 			else if (position_->avoirPositionY() > posY && cas->avoirPositionY() < posY) { return true; }
-// 		}
-// 	}
-// 	return false;
-// }
+bool Piece::isEnemy(std::unique_ptr<Piece>& piece) {
+    return color_ != piece->getColor();
+}

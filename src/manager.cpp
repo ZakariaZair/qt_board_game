@@ -1,3 +1,4 @@
+#include <iostream>
 #include "manager.h"
 #include <memory>
 using namespace chess;
@@ -21,51 +22,38 @@ ClickState Manager::getState() {
     return state_;
 }
 
-void Manager::selectTile(Tiles board, std::pair<int, int> pos) {
-    int index = pos.first*8 + pos.second;
+void Manager::selectTile(Tiles board, std::pair<int, int> clic) {
+    int index = clic.first*8 + clic.second;
     if (board[index]->getPieceAtTile() == nullptr) return;
-    selectedTile_.reset();
-    selectedTile_ = board[index];
-    Tiles tiles = selectedTile_->getPieceAtTile()->getValidMoves(board, pos);
-    for (auto& tile : tiles) {
-        tile->validMoveRepresentation();
-    }
 
     state_ = ClickState::TILESELECTED;
-
+    selectedTile_.reset();
+    selectedTile_ = board[index];
+    selectedTile_->selectedRepresentation();
+    Tiles validTiles = selectedTile_->getPieceAtTile()->getValidMoves(board, selectedTile_->getPos());
+    for (std::shared_ptr<Tile> tile : validTiles) tile->validMoveRepresentation();
 }
 
-// std::shared_ptr<classejeux::Piece> classejeux::Manager::pieceTrouvee(int positionX, int positionY) {
-// 	for (auto& piece : pieces_) {
-// 		if (piece->position_->avoirPositionX() == positionX && piece->position_->avoirPositionY() == positionY) {
-// 			return piece;
-// 		}
-// 	}
-// 	return nullptr;
-// }
+void Manager::movePiece(Tiles board, std::pair<int, int> clic) {
+    int index = clic.first*8 + clic.second;
+    if (board[index] == selectedTile_) return;
+    selectedTile_->refreshRepresentation();
 
-// void classejeux::Manager::modifierPosition(int nouveauX, int nouveauY, int ancienX, int ancienY) {
-// 	for (auto& piece : pieces_) {
-// 		if (ancienX == piece->avoirPosition()->avoirPositionX() && ancienY == piece->avoirPosition()->avoirPositionY()) {
-// 			piece->avoirPosition()->changerX(nouveauX);
-// 			piece->avoirPosition()->changerY(nouveauY);
-// 		}
-// 	}
-// }
+    Tiles validTiles = selectedTile_->getPieceAtTile()->getValidMoves(board, selectedTile_->getPos());
+    for (std::shared_ptr<Tile> tile : validTiles) tile->refreshRepresentation();
+    bool isValid = false;
+    for (std::shared_ptr<Tile> tile : validTiles) {if ( board[index] == tile) isValid = true; }
+    if (!isValid) { state_ = ClickState::NOTHING; return;}
 
-// void classejeux::Manager::retirerPiece(std::shared_ptr<Piece> pieceRetire) {
-// 	auto it = std::find(pieces_.begin(), pieces_.end(), pieceRetire);
-// 	pieces_.erase(it);
-// }
-
-// std::shared_ptr<classejeux::Case> classejeux::Manager::avoirPosRoi() {
-// 	for (auto&& p : pieces_) {
-// 		if (!p->estMangeable()) {
-// 			return p->position_;
-// 		}
-// 	}
-// 	return nullptr;
-// }
+    if (board[index]->getPieceAtTile() == nullptr) {
+        // performer des check avant ex: roi en echec
+        board[index]->setPieceAtTile(selectedTile_->getPieceAtTile());
+        board[index]->refreshRepresentation();
+        selectedTile_->refreshRepresentation();
+    }
+    selectedTile_.reset();
+    state_ = ClickState::NOTHING;
+}
 
 // bool classejeux::Manager::roiEnEchec(Jeux jeu, Manager adversaire, int x, int y) { // Roi en echec :
 // 	if (adversaire.pieceTrouvee(x, y)) {
