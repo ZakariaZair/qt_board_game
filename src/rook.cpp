@@ -1,33 +1,15 @@
-classejeux::Tour::Tour(const classejeux::Jeux jeux) : Piece(jeux) {
-	characterBlanc_ = "♖";
-	characterNoir_ = "♜";
-	mangeable = true;
-}
 
-std::string classejeux::Tour::avoirCharNoir() {
-	return characterNoir_;
-}
+#include "rook.h"
+#include "chess_definition.h"
+using namespace chess;
 
-std::string classejeux::Tour::avoirCharBlanc() {
-	return characterBlanc_;
-}
-
-//implémenter mouvement
-std::vector<std::shared_ptr<classejeux::Case>> classejeux::Tour::mouvementsValide(Jeux jeu, Joueur& joueur, Joueur& autreJoueur) {
-	std::vector<std::shared_ptr<Case>> v;
-	for (int i = 0; i < 8; i++) {
-		for (int j = 0; j < 8; j++) {
-			if (autrePieceEnnemi(jeu.echiquier_[i][j], autreJoueur)) { continue; }
-			if (autrePieceAmis(jeu.echiquier_[i][j], joueur)) { continue; }
-
-			if (jeu.echiquier_[i][j]->avoirPositionX() == position_->avoirPositionX() || jeu.echiquier_[i][j]->avoirPositionY() == position_->avoirPositionY()) {
-				if (jeu.echiquier_[i][j]->avoirPositionX() != position_->avoirPositionX() || jeu.echiquier_[i][j]->avoirPositionY() != position_->avoirPositionY()) {
-					v.push_back(jeu.avoirCase(i, j));
-				}
-			}
-
-		}
-	}
-
-	return v;
+Rook::Rook(Color color) : Piece(color) {
+	symbol_ = "♜";
+	directions_ = {
+        std::make_pair(1,0),
+        std::make_pair(-1,0),
+        std::make_pair(0,1),
+        std::make_pair(0,-1),
+	};
+	isMoveRepetitive_ = true;
 }

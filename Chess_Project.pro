@@ -4,7 +4,6 @@
 
 TEMPLATE = app
 TARGET = Chess_Project
-INCLUDEPATH += .
 
 # You can make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -14,26 +13,25 @@ INCLUDEPATH += .
 #DEFINES += QT_DISABLE_DEPRECATED_UP_TO=0x060000 # disables all APIs deprecated in Qt 6.0.0 and earlier
 
 # Input
-HEADERS += include/board.h \
-           include/king.h \
+HEADERS += include/king.h \
            include/knight.h \
            include/piece.h \
-           include/player.h \
+           include/manager.h \
            include/project.h \
            include/rook.h \
-           include/square.h
+           include/tile.h
 FORMS += project.ui
-SOURCES += include/board.cpp \
-           include/king.cpp \
-           include/knight.cpp \
-           include/piece.cpp \
-           include/player.cpp \
-           include/project.cpp \
-           include/rook.cpp \
-           include/square.cpp
+SOURCES += src/main.cpp \
+           src/king.cpp \
+           src/knight.cpp \
+           src/piece.cpp \
+           src/manager.cpp \
+           src/project.cpp \
+           src/rook.cpp \
+           src/tile.cpp
 
 QT += widgets
-INCLUDEPATH += include/
+INCLUDEPATH += include
 DESTDIR = $$OUT_PWD/build
 OBJECTS_DIR = $$DESTDIR/objs
 MOC_DIR = $$DESTDIR/moc

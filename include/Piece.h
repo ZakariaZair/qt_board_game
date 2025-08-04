@@ -9,23 +9,18 @@
 namespace chess {
     class Piece {
     public:
-       	Piece();
-       	Piece(const Board board);
-       	virtual ~Piece() = default;
+        Piece();
+       	Piece(Color color);
+       	~Piece() = default;
 
-       	virtual std::string getSymbol();
-       	virtual std::vector<std::shared_ptr<Tile>> validMoves(Board jeu, Player& joueur, Player& autreJoueur) = 0;
-       	std::shared_ptr<Tile> getTile();
+        Tiles getValidMoves(Tiles tiles);
+        std::string getSymbol();
+        Color getColor();
 
-       	bool isEdible() { return edible_; }
-       	bool isFriend(std::shared_ptr<Tile> cas, Player joueur);
-       	bool isEnnemi(std::shared_ptr<Tile> cas, Player joueur);
-
-       	void showPosition();
-    private:
+    protected:
         std::vector<std::pair<int, int>> directions_;
-        std::pair<int, int> position_;
        	std::string symbol_;
-       	bool edible_;
+        Color color_;
+        bool isMoveRepetitive_;
     };
 }

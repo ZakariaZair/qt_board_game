@@ -6,6 +6,11 @@
 #include <vector>
 #include "ui_project.h"
 #include "chess_definition.h"
+#include "manager.h"
+#include "king.h"
+#include "rook.h"
+#include "knight.h"
+#include "tile.h"
 using namespace chess;
 
 enum LobbyOption {
@@ -20,33 +25,30 @@ class Project : public QMainWindow
 
 public:
     Project(QWidget* parent = Q_NULLPTR);
-    ~Project();
     virtual void mousePressEvent(QMouseEvent* event) override;
     virtual void mouseReleaseEvent(QMouseEvent* event) override;
 
-    void couleurBoardNormal();
-    void couleurBoardEchec();
+    // void couleurBoardNormal();
+    // void couleurBoardEchec();
 
-    void option1();
-    void option2();
-    void option3();
-    void option();
+    // void option1();
+    // void option2();
+    // void option3();
+    void nextTurn();
 
 private slots:
     void setUp();
     void start();
     void stop();
-    void changeOption(int in);
+    void defaulting();
 
 private:
-    std::vector<std::shared_ptr<Tile>> board_;
-    std::shared_ptr<Player> playerWhite_;
-    std::shared_ptr<Player> playerBlack_;
-    std::vector<std::shared_ptr<Piece>> piecesWhite_;
-    std::vector<std::shared_ptr<Piece>> piecesBlack_;
-    int lobbyOption_ = LobbyOption::DEFAULT;
+    Tiles board_;
+    std::unique_ptr<Manager> manager_;
+    int turn_ = 0;
+
+    LobbyOption lobbyOption_;
     bool gameStarted_ = false;
-    std::optional<std::pair<int, int>> tileClicked_;
 
     Ui::ProjetFinalEchecClass ui;
 };
