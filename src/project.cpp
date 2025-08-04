@@ -21,6 +21,7 @@
 // ../include path
 #include "project.h"
 #include "chess_definition.h"
+#include "manager.h"
 #include "rook.h"
 
 namespace graphicsInterface {
@@ -33,7 +34,6 @@ namespace gi = graphicsInterface;
 
 Project::Project(QWidget* parent) : QMainWindow(parent)
 {
-
     setUp();
     manager_ = std::make_unique<Manager>(Manager({
         {Color::WHITE, "Zakaria"},
@@ -137,17 +137,19 @@ void Project::start() {
 
 void Project::mousePressEvent(QMouseEvent* event) {
     if (event->button() != Qt::LeftButton) return;
-    QWidget* possibleWidget = QApplication::widgetAt(event->pos());
-    if (possibleWidget == nullptr) {
-        std::cout << "nothing" << std::endl;
-    } else {
-        possibleWidget->setStyleSheet({"QLabel { background-color : orange }"});
-    }
-    // int tailleCaseX = width();
-    // int tailleCaseY = height();
 
-    // int x = ceil(event->x() / (tailleCaseX / 8));
-    // int y = ceil(event->y() / (tailleCaseY / 8));
+    int tailleCaseX = width();
+    int tailleCaseY = height();
+
+    int clicX = ceil(event->x() / (tailleCaseX / 8));
+    int clicY = ceil(event->y() / (tailleCaseY / 8));
+
+    switch (manager_->getState()) {
+        case ClickState::NOTHING:
+            manager_->selectTile(board_, {clicX, clicY});
+        case ClickState::TILESELECTED:
+            ;
+    }
 
     // if (tileClicked_) {
     //     if (tileClicked_->first == x && tileClicked_->second == y) {  // Cliquer sur lui meme

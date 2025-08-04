@@ -13,9 +13,11 @@ namespace chess {
        	Piece(Color color);
        	~Piece() = default;
 
-        Tiles getValidMoves(Tiles tiles);
+        Tiles getValidMoves(Tiles board, std::pair<int, int> pos);
         std::string getSymbol();
         Color getColor();
+
+        bool inOfBounds(std::pair<int, int> move);
 
     protected:
         std::vector<std::pair<int, int>> directions_;

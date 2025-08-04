@@ -9,12 +9,23 @@ Manager::Manager(std::map<Color, std::string> players) {
 
 void Manager::addPieceToTile(int x, int y, std::unique_ptr<Piece>& piece, Tiles tiles) {
     int index = x*8 + y;
-    tiles[index]->setPieceAtTile(piece);
+    ((std::shared_ptr<Tile>)tiles[index])->setPieceAtTile(piece);
 }
 
 std::map<Color, std::string> Manager::getPlayers() {
     return players_;
-};
+}
+
+ClickState Manager::getState() {
+    return state_;
+}
+
+void Manager::selectTile(Tiles board, std::pair<int, int> pos) {
+    if (board[pos.first*8 + pos.second]->getPieceAtTile() == nullptr) return;
+    selectedTile_.reset();
+    selectedTile_ = board[pos.first*8 + pos.second];
+    state_ = ClickState::TILESELECTED;
+}
 
 // std::shared_ptr<classejeux::Piece> classejeux::Manager::pieceTrouvee(int positionX, int positionY) {
 // 	for (auto& piece : pieces_) {

@@ -9,9 +9,7 @@ namespace chess {
     class Piece;
     class Rook;
     class Tile;
-    enum Color {
-        WHITE = 0,
-        BLACK = 1
-    };
+    enum Color { WHITE = 0, BLACK = 1};
+    enum ClickState { NOTHING, TILESELECTED};
     typedef std::vector<std::shared_ptr<Tile>> Tiles;
 }
