@@ -2,6 +2,7 @@
 #include <memory>
 using namespace chess;
 #include "tile.h"
+#include "piece.h"
 
 Manager::Manager(std::map<Color, std::string> players) {
     players_ = players;
@@ -21,10 +22,17 @@ ClickState Manager::getState() {
 }
 
 void Manager::selectTile(Tiles board, std::pair<int, int> pos) {
-    if (board[pos.first*8 + pos.second]->getPieceAtTile() == nullptr) return;
+    int index = pos.first*8 + pos.second;
+    if (board[index]->getPieceAtTile() == nullptr) return;
     selectedTile_.reset();
-    selectedTile_ = board[pos.first*8 + pos.second];
+    selectedTile_ = board[index];
+    Tiles tiles = selectedTile_->getPieceAtTile()->getValidMoves(board, pos);
+    for (auto& tile : tiles) {
+        tile->validMoveRepresentation();
+    }
+
     state_ = ClickState::TILESELECTED;
+
 }
 
 // std::shared_ptr<classejeux::Piece> classejeux::Manager::pieceTrouvee(int positionX, int positionY) {

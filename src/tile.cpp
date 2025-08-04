@@ -49,3 +49,11 @@ void Tile::refreshRepresentation() {
     label_->setStyleSheet(QString::fromStdString("background-color: burlywood;" + colorStyle)):
     label_->setStyleSheet(QString::fromStdString("background-color: beige;" + colorStyle));
 }
+
+void Tile::validMoveRepresentation() {
+    std::string colorStyle = "color: ";
+    if (pieceAtTile_) {
+        colorStyle += pieceAtTile_->getColor() == Color::WHITE ? "white;" : "black;";
+    }
+    label_->setStyleSheet(QString::fromStdString("background-color: yellow;" + colorStyle));
+}
