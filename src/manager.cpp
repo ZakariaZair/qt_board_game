@@ -46,6 +46,9 @@ void Manager::move(Tiles board, std::pair<int, int> clic) {
     selectedTile_->refreshRepresentation();
 
     Tiles validTiles = selectedTile_->getPieceAtTile()->getValidMoves(board, selectedTile_->getPos());
+    if (selectedTile_->getPieceAtTile()->getSymbol() == "♔") {
+        removeRiskyMoves(board, validTiles);
+    };
     for (std::shared_ptr<Tile> tile : validTiles) tile->refreshRepresentation();
     bool isValid = false;
     for (std::shared_ptr<Tile> tile : validTiles) if (board[index] == tile) isValid = true;
@@ -66,7 +69,22 @@ void Manager::removeRiskyMoves(Tiles board, Tiles& validTiles) {
         if (tile->getPieceAtTile() == nullptr) continue;
         if (tile->getPieceAtTile()->getColor() == turnColor_) continue;
         Tiles currentPieceValidTiles = tile->getPieceAtTile()->getValidMoves(board, tile->getPos());
+        toRemove.insert(currentPieceValidTiles.begin(), currentPieceValidTiles.end());
     }
+
+    auto it = validTiles.begin();
+    while (it != validTiles.end()) {
+        if (toRemove.find(*it) != toRemove.end()) {
+            validTiles.erase(it);
+        } else {
+            it++;
+        }
+    }
+    // for (auto it = validTiles.begin(); it != validTiles.end(); it++) {
+    //     if (toRemove.find(*it) != toRemove.end()) {
+    //         validTiles.erase(it);
+    //     }
+    // }
 }
 
 void Manager::toggleValidMoves(Tiles board) {
@@ -80,7 +98,8 @@ void Manager::toggleValidMoves(Tiles board) {
 void Manager::toggleValidMoves(Tiles board, Color color) {
     for (auto tile: board) {
         if (tile->getPieceAtTile() == nullptr) continue;
-        if (tile->getPieceAtTile()->getColor() == color) continue;
+        if (tile->getPieceAtTile()->getColor() != color) continue;
+        tile->selectedRepresentation();
         Tiles currentPieceValidTiles = tile->getPieceAtTile()->getValidMoves(board, tile->getPos());
         for (auto& currentPieceValidTile: currentPieceValidTiles) currentPieceValidTile->validMoveRepresentation();
     }
