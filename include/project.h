@@ -26,7 +26,9 @@ class Project : public QMainWindow
 public:
     Project(QWidget* parent = Q_NULLPTR);
     virtual void mousePressEvent(QMouseEvent* event) override;
-    virtual void mouseReleaseEvent(QMouseEvent* event) override;
+    virtual void keyPressEvent(QKeyEvent* event) override;
+    virtual void keyReleaseEvent(QKeyEvent* event) override;
+    // virtual void mouseReleaseEvent(QMouseEvent* event) override;
 
     // void couleurBoardNormal();
     // void couleurBoardEchec();
@@ -45,7 +47,6 @@ private slots:
 private:
     Tiles board_;
     std::unique_ptr<Manager> manager_;
-    int turn_ = 0;
 
     LobbyOption lobbyOption_;
     bool gameStarted_ = false;

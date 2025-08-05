@@ -10,6 +10,6 @@ namespace chess {
     class Rook;
     class Tile;
     enum Color { WHITE = 0, BLACK = 1};
-    enum ClickState { NOTHING, TILESELECTED};
+    enum ClickState { SELECTION, NORMAL_MOVE, RISKKING, CAREFUL_MOVE};
     typedef std::vector<std::shared_ptr<Tile>> Tiles;
 }

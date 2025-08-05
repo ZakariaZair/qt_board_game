@@ -113,10 +113,6 @@ void Project::defaulting() {
     lobbyOption_ = LobbyOption::DEFAULT;
 }
 
-void Project::nextTurn() {
-    ++turn_ %= (int)manager_->getPlayers().size();
-}
-
 void Project::start() {
     QMainWindow::setFixedSize(gi::sizeGameWidget, gi::sizeGameWidget);
     QWidget* prinFenetre = new QWidget;
@@ -144,116 +140,40 @@ void Project::mousePressEvent(QMouseEvent* event) {
     int clicY = ceil(event->y() / (tailleCaseY / 8));
 
     switch (manager_->getState()) {
-        case ClickState::NOTHING:
+        case ClickState::SELECTION:
             manager_->selectTile(board_, {clicX, clicY});
             break;
-        case ClickState::TILESELECTED:
-            manager_->movePiece(board_, {clicX, clicY});
+        case ClickState::NORMAL_MOVE:
+            manager_->move(board_, {clicX, clicY});
+            break;
+        case ClickState::RISKKING:
+            // manager_->selectRescueTiles(board_, {clicX, clicY});
+            break;
+        case ClickState::CAREFUL_MOVE:
+            // manager_->rescueKing(board_, {clicX, clicY});
             break;
     }
-
-    // if (tileClicked_) {
-    //     if (tileClicked_->first == x && tileClicked_->second == y) {  // Cliquer sur lui meme
-    //         tileClicked_.reset();
-    //         couleurBoardNormal();
-
-    //     }
-    //     else {
-    //         for (auto&& caseVal : tourJoueur->pieceTrouvee(tileClicked_->first, tileClicked_->second)->mouvementsValide(jeu, *tourJoueur, *autreJoueur)) {
-    //             if (caseVal->avoirPositionX() == x && caseVal->avoirPositionY() == y) { // Si position valide == position clic
-    //                 tourJoueur->modifierPosition(x, y, tileClicked_->first, tileClicked_->second);
-    //                 if (tourJoueur->roiEnEchec(jeu, *autreJoueur, x, y)) {
-    //                     std::cout << "ECHEC !!!" << std::endl;
-    //                     tourJoueur->modifierPosition(tileClicked_->first, tileClicked_->second, x, y);
-    //                     couleurBoardNormal();
-    //                     couleurBoardEchec();
-    //                     tileClicked_.reset();
-    //                     break;
-    //                 }
-
-    //                 couleurBoardNormal();
-
-    //                 arrayLabel[tileClicked_->first][tileClicked_->second]->setText(" "); // Met au tireur Texte Vide
-
-    //                 tourJoueur->modifierPosition(x, y, tileClicked_->first, tileClicked_->second); // Modifie position de la piece vers cible
-    //                 if (tourJoueur == &j1) {
-    //                     if (j2.pieceTrouvee(x, y)) {
-    //                         j2.retirerPiece(j2.pieceTrouvee(x, y));
-    //                     }
-    //                     std::shared_ptr<Piece> pieceJ1 = j1.pieceTrouvee(x, y);
-    //                     arrayLabel[x][y]->setText(QString::fromStdString(pieceJ1->avoirCharBlanc()));
-    //                     tourJoueur = &j2;
-    //                     autreJoueur = &j1;
-    //                 }
-    //                 else if (tourJoueur == &j2) {
-    //                     if (j1.pieceTrouvee(x, y)) {
-    //                         j1.retirerPiece(j1.pieceTrouvee(x, y));
-    //                     }
-    //                     std::shared_ptr<Piece> pieceJ2 = j2.pieceTrouvee(x, y);
-    //                     arrayLabel[x][y]->setText(QString::fromStdString(pieceJ2->avoirCharNoir()));
-    //                     tourJoueur = &j1;
-    //                     autreJoueur = &j2;
-    //                 }
-    //                 tileClicked_.reset();
-    //             }
-    //         }
-    //     }
-
-    // }
-    // else {
-    //     if (tourJoueur->pieceTrouvee(x, y)) {
-    //         tileClicked_ = { x, y };
-    //         for (auto caseVal : tourJoueur->pieceTrouvee(caseCliquee->first, caseCliquee->second)->mouvementsValide(jeu, *tourJoueur, *autreJoueur)) {
-    //             arrayLabel[caseVal->avoirPositionX()][caseVal->avoirPositionY()]->setStyleSheet("QLabel { background-color: yellow}");
-    //             arrayLabel[caseVal->avoirPositionX()][caseVal->avoirPositionY()]->setStyleSheet("QLabel { border: 3px solid yellow;}");
-    //         }
-    //     }
-    // }
 }
 
-// void Project::couleurBoardNormal() {
-//     for (int i = 0; i < 8; i++) {
-//         for (int j = 0; j < 8; j++) {
-//             if ((i + j) % 2 == 0) {
-//                 arrayLabel[i][j]->setStyleSheet("QLabel { background-color : burlywood }");
-//             } else {
-//                 arrayLabel[i][j]->setStyleSheet("QLabel { background-color : beige }");
-//             }
-//         }
-//     }
-// }
+void Project::keyPressEvent(QKeyEvent* event) {
+    if (event->key() == Qt::Key_R) {
+        manager_->toggleValidMoves(board_);
+    } else if (event->key() == Qt::Key_W) {
+        manager_->toggleValidMoves(board_, Color::WHITE);
+    } else if (event->key() == Qt::Key_B) {
+        manager_->toggleValidMoves(board_, Color::BLACK);
+    }
+}
 
-
-// void Project::couleurBoardEchec() {
-//     for (int i = 0; i < 8; i++) {
-//         for (int j = 0; j < 8; j++) {
-//             auto k = tourJoueur->avoirPosRoi();
-//             if (jeu.echiquier_[i][j]->avoirPositionX() == k->avoirPositionX() && jeu.echiquier_[i][j]->avoirPositionY() == k->avoirPositionY()) {
-//                 arrayLabel[i][j]->setStyleSheet("QLabel { background-color: red; border: 7px solid rgb(150, 10, 30);}");
-//                 break;
-//             }
-//         }
-//     }
-// }
-
-void Project::mouseReleaseEvent(QMouseEvent* event) {
-    // int tailleCaseX = width();
-    // int tailleCaseY = height();
-
-    // int x = ceil(event->x() / (tailleCaseX / 8)); // numero de la case
-    // int y = ceil(event->y() / (tailleCaseY / 8));
-
-    // if (!caseCliquee && jeuParti) {
-    //     if (tourJoueur->echecMat(jeu, *autreJoueur)) {  // Joueur en début de tour (le tour vient de changer)
-    //         std::cout << "GAME OVER" << std::endl;
-    //         stopJeu();
-    //     }
-    // }
-};
+void Project::keyReleaseEvent(QKeyEvent* event) {
+    if (event->key() == Qt::Key_R || event->key() == Qt::Key_B || event->key() == Qt::Key_W) {
+        manager_->resetToggles(board_);
+    }
+}
 
 void Project::stop() {
 
-//     jeuParti = false;
+//     gameStarted_ = false;
 
 //     for (auto&& p : j1.avoirPieces()) {
 //         j1.retirerPiece(p);

@@ -6,7 +6,8 @@ using namespace chess;
 Tile::Tile() {
 	position_ = std::make_pair(-1, -1);
 	label_ = new QLabel;
-    QFont qfont("Times New Roman", 60);
+    QFont qfont("Times New Roman", 72);
+    qfont.bold();
     label_->setFont(qfont);
     label_->setAlignment(Qt::AlignCenter);
 }
@@ -56,7 +57,10 @@ void Tile::validMoveRepresentation() {
     if (pieceAtTile_) {
         colorStyle += pieceAtTile_->getColor() == Color::WHITE ? "white;" : "black;";
     }
-    label_->setStyleSheet(QString::fromStdString("background-color: gold;" + colorStyle));
+    std::string borderStyle = (position_.first + position_.second) % 2 == 0 ?
+    "border-style: solid; border-width: 5px; border-color: burlywood;":
+    "border-style: solid; border-width: 5px; border-color: beige;";
+    label_->setStyleSheet(QString::fromStdString("background-color: gold;" + borderStyle + colorStyle));
 }
 
 void Tile::selectedRepresentation() {

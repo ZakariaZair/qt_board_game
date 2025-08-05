@@ -1,5 +1,6 @@
 #include <iostream>
 #include "piece.h"
+#include "king.h"
 #include "tile.h"
 #include "chess_definition.h"
 #include <cstddef>
@@ -19,24 +20,28 @@ directions_({}) {
 
 Tiles Piece::getValidMoves(Tiles board, std::pair<int,int> pos) {
     Tiles validTiles = {};
+    int index = 0;
     for (std::pair<int, int> direction : directions_) {
         std::pair<int, int> move = pos;
         move.first += direction.first;
         move.second += direction.second;
+        index = move.first*8+move.second;
         bool accepted = inOfBounds(move)
-            && (board[move.first*8+move.second]->getPieceAtTile() == nullptr
-            || isEnemy(board[move.first*8+move.second]->getPieceAtTile()));
+            && (board[index]->getPieceAtTile() == nullptr
+            || isEnemy(board[index]->getPieceAtTile()));
         if (isMoveRepetitive_) {
             while (accepted) {
-                validTiles.push_back(board[move.first*8+move.second]);
+                validTiles.push_back(board[index]);
+                if (board[index]->getPieceAtTile() != nullptr && isEnemy(board[index]->getPieceAtTile())) break;
                 move.first += direction.first;
                 move.second += direction.second;
+                index = move.first*8+move.second;
                 accepted = inOfBounds(move)
-                    && (board[move.first*8+move.second]->getPieceAtTile() == nullptr
-                    || isEnemy(board[move.first*8+move.second]->getPieceAtTile()));
+                    && (board[index]->getPieceAtTile() == nullptr
+                    || isEnemy(board[index]->getPieceAtTile()));
             }
         } else {
-            if (accepted) validTiles.push_back(board[move.first*8+move.second]);
+            if (accepted) validTiles.push_back(board[index]);
         }
     }
     return validTiles;
