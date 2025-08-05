@@ -54,15 +54,15 @@ void Manager::move(Tiles board, std::pair<int, int> clic) {
     for (std::shared_ptr<Tile> tile : validTiles) if (board[index] == tile) isValid = true;
     if (!isValid) {state_ = ClickState::SELECTION; return;}
 
-    if (isKingCheck(board, index)) return;
+    if (isKingCheck(board, index)) {state_ = ClickState::SELECTION; return;}
     board[index]->setPieceAtTile(selectedTile_->getPieceAtTile());
     board[index]->refreshRepresentation();
     selectedTile_->refreshRepresentation();
-    // isOpponentKingCheck(board);
+    state_ = ClickState::SELECTION;
+    isOpponentKingCheck(board);
 
     nextTurnColor();
     selectedTile_.reset();
-    state_ = ClickState::SELECTION;
 }
 
 void Manager::removeRiskyMoves(Tiles board, Tiles& validTiles) {
@@ -83,9 +83,11 @@ void Manager::removeRiskyMoves(Tiles board, Tiles& validTiles) {
     }
 }
 
-
 bool Manager::isKingCheck(Tiles board, int index) {
+    Tile simulationTempTile = Tile();
+    simulationTempTile.setPieceAtTile(board[index]->getPieceAtTile());
     board[index]->setPieceAtTile(selectedTile_->getPieceAtTile());
+
     std::shared_ptr<Tile> kingTile;
     std::set<std::shared_ptr<Tile>> opponentValidTiles = {};
     for (auto tile: board) {
@@ -95,7 +97,9 @@ bool Manager::isKingCheck(Tiles board, int index) {
         Tiles currentPieceValidTiles = tile->getPieceAtTile()->getValidMoves(board, tile->getPos());
         opponentValidTiles.insert(currentPieceValidTiles.begin(), currentPieceValidTiles.end());
     }
+
     selectedTile_->setPieceAtTile(board[index]->getPieceAtTile());
+    if (simulationTempTile.getPieceAtTile() != nullptr) board[index]->setPieceAtTile(simulationTempTile.getPieceAtTile());
 
     if (opponentValidTiles.find(kingTile) != opponentValidTiles.end()) {
         kingTile->checkRepresentation();
@@ -105,10 +109,31 @@ bool Manager::isKingCheck(Tiles board, int index) {
 }
 
 bool Manager::isOpponentKingCheck(Tiles board) {
+    std::shared_ptr<Tile> kingTile;
+    std::set<std::shared_ptr<Tile>> opponentValidTiles = {};
+    for (auto tile: board) {
+        if (tile->getPieceAtTile() == nullptr) continue;
+        if (tile->getPieceAtTile()->getSymbol() == "♔" && tile->getPieceAtTile()->getColor() != turnColor_) kingTile = tile;
+        if (tile->getPieceAtTile()->getColor() != turnColor_) continue;
+        Tiles currentPieceValidTiles = tile->getPieceAtTile()->getValidMoves(board, tile->getPos());
+        opponentValidTiles.insert(currentPieceValidTiles.begin(), currentPieceValidTiles.end());
+    }
 
+    if (opponentValidTiles.find(kingTile) != opponentValidTiles.end()) {
+        kingTile->checkRepresentation();
+        Tiles kingValidTiles = kingTile->getPieceAtTile()->getValidMoves(board, kingTile->getPos());
+        bool canMoveToSafety = false;
+        for (auto kingValidTile: kingValidTiles) if (opponentValidTiles.find(kingValidTile) == opponentValidTiles.end()) canMoveToSafety = true;
+        if (!canMoveToSafety) {
+            std::cout << "cannot move to safety !!!" << std::endl;
+            // bool canProtect = false;
+            // for (auto kingValidTile: kingValidTiles) if (opponentValidTiles.find(kingTile) != opponentValidTiles.end()) ;
+            // if (can)
+        }
+        return true;
+    }
+    return false;
 }
-
-
 
 void Manager::toggleValidMoves(Tiles board) {
     for (auto tile: board) {

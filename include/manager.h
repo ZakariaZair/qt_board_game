@@ -14,14 +14,14 @@ namespace chess {
         void selectTile(Tiles board, std::pair<int, int> clic);
         void move(Tiles board, std::pair<int, int> clic);
         void removeRiskyMoves(Tiles board, Tiles& validTiles);
-        
+
         bool isKingCheck(Tiles board, int index);
         bool isOpponentKingCheck(Tiles board);
-        
+
         void toggleValidMoves(Tiles board);
         void toggleValidMoves(Tiles board, Color color);
         void resetToggles(Tiles board);
-        
+
         void nextTurnColor();
         ClickState getState();
         std::map<Color, std::string> getPlayers();
