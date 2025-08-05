@@ -9,6 +9,7 @@ namespace chess {
     class King : public Piece {
     public:
     	King(Color color);
+        
     	static int getCount() { return count_; }
     private:
     	static int count_;

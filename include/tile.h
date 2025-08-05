@@ -22,6 +22,7 @@ namespace chess {
         void refreshRepresentation();
         void validMoveRepresentation();
         void selectedRepresentation();
+        void checkRepresentation();
 
     private:
         std::unique_ptr<Piece> pieceAtTile_;

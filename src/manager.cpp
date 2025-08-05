@@ -54,11 +54,13 @@ void Manager::move(Tiles board, std::pair<int, int> clic) {
     for (std::shared_ptr<Tile> tile : validTiles) if (board[index] == tile) isValid = true;
     if (!isValid) {state_ = ClickState::SELECTION; return;}
 
+    if (isKingCheck(board, index)) return;
     board[index]->setPieceAtTile(selectedTile_->getPieceAtTile());
-    nextTurnColor();
     board[index]->refreshRepresentation();
     selectedTile_->refreshRepresentation();
+    // isOpponentKingCheck(board);
 
+    nextTurnColor();
     selectedTile_.reset();
     state_ = ClickState::SELECTION;
 }
@@ -71,7 +73,6 @@ void Manager::removeRiskyMoves(Tiles board, Tiles& validTiles) {
         Tiles currentPieceValidTiles = tile->getPieceAtTile()->getValidMoves(board, tile->getPos());
         toRemove.insert(currentPieceValidTiles.begin(), currentPieceValidTiles.end());
     }
-
     auto it = validTiles.begin();
     while (it != validTiles.end()) {
         if (toRemove.find(*it) != toRemove.end()) {
@@ -80,12 +81,34 @@ void Manager::removeRiskyMoves(Tiles board, Tiles& validTiles) {
             it++;
         }
     }
-    // for (auto it = validTiles.begin(); it != validTiles.end(); it++) {
-    //     if (toRemove.find(*it) != toRemove.end()) {
-    //         validTiles.erase(it);
-    //     }
-    // }
 }
+
+
+bool Manager::isKingCheck(Tiles board, int index) {
+    board[index]->setPieceAtTile(selectedTile_->getPieceAtTile());
+    std::shared_ptr<Tile> kingTile;
+    std::set<std::shared_ptr<Tile>> opponentValidTiles = {};
+    for (auto tile: board) {
+        if (tile->getPieceAtTile() == nullptr) continue;
+        if (tile->getPieceAtTile()->getSymbol() == "♔" && tile->getPieceAtTile()->getColor() == turnColor_) kingTile = tile;
+        if (tile->getPieceAtTile()->getColor() == turnColor_) continue;
+        Tiles currentPieceValidTiles = tile->getPieceAtTile()->getValidMoves(board, tile->getPos());
+        opponentValidTiles.insert(currentPieceValidTiles.begin(), currentPieceValidTiles.end());
+    }
+    selectedTile_->setPieceAtTile(board[index]->getPieceAtTile());
+
+    if (opponentValidTiles.find(kingTile) != opponentValidTiles.end()) {
+        kingTile->checkRepresentation();
+        return true;
+    }
+    return false;
+}
+
+bool Manager::isOpponentKingCheck(Tiles board) {
+
+}
+
+
 
 void Manager::toggleValidMoves(Tiles board) {
     for (auto tile: board) {

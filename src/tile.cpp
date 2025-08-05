@@ -22,7 +22,6 @@ std::pair<int, int> Tile::getPos() { return position_; }
 void Tile::setPos(int x, int y) {
     position_.first = x;
     position_.second = y;
-    refreshRepresentation();
 }
 
 QLabel* Tile::getLabel() { return label_; }
@@ -33,7 +32,6 @@ void Tile::setLabel(QLabel* label) {
 
 void Tile::setPieceAtTile(std::unique_ptr<Piece>& piece) {
     pieceAtTile_ = std::move(piece);
-    refreshRepresentation();
 }
 
 std::unique_ptr<Piece>& Tile::getPieceAtTile() {
@@ -69,6 +67,17 @@ void Tile::selectedRepresentation() {
         colorStyle += pieceAtTile_->getColor() == Color::WHITE ? "white;" : "black;";
     }
     std::string borderStyle = "border-style: outset; border-width: 5px; border-color: gold;";
+    (position_.first + position_.second) % 2 == 0 ?
+    label_->setStyleSheet(QString::fromStdString("background-color: burlywood;" + borderStyle + colorStyle)):
+    label_->setStyleSheet(QString::fromStdString("background-color: beige;" + borderStyle + colorStyle));
+}
+
+void Tile::checkRepresentation() {
+    std::string colorStyle = "color: ";
+    if (pieceAtTile_) {
+        colorStyle += pieceAtTile_->getColor() == Color::WHITE ? "white;" : "black;";
+    }
+    std::string borderStyle = "border-style: outset; border-width: 5px; border-color: firebrick;";
     (position_.first + position_.second) % 2 == 0 ?
     label_->setStyleSheet(QString::fromStdString("background-color: burlywood;" + borderStyle + colorStyle)):
     label_->setStyleSheet(QString::fromStdString("background-color: beige;" + borderStyle + colorStyle));

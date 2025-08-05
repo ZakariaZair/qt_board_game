@@ -78,6 +78,10 @@ Project::Project(QWidget* parent) : QMainWindow(parent)
     currentPiece = std::make_unique<Piece>(blackRook2);
     manager_->addPieceToTile(7, 0, currentPiece, board_);
 
+    for (std::shared_ptr<Tile> tile : board_) {
+        tile->refreshRepresentation();
+    }
+
 };
 
 void Project::setUp() {
