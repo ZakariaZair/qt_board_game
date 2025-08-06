@@ -131,7 +131,6 @@ void Project::start() {
 
     prinFenetre->setLayout(gridLayout);
     setCentralWidget(prinFenetre);
-    gameStarted_ = true;
 };
 
 void Project::mousePressEvent(QMouseEvent* event) {
@@ -157,6 +156,10 @@ void Project::mousePressEvent(QMouseEvent* event) {
             // manager_->rescueKing(board_, {clicX, clicY});
             break;
     }
+
+    if (manager_->isCheckmate()) {
+        stop();
+    }
 }
 
 void Project::keyPressEvent(QKeyEvent* event) {
@@ -181,34 +184,25 @@ void Project::keyReleaseEvent(QKeyEvent* event) {
 
 void Project::stop() {
 
-//     gameStarted_ = false;
+    QWidget* menu = new QWidget;
+    menu->setFixedSize(500, 200);
+    QMainWindow::setFixedSize(500, 200);
 
-//     for (auto&& p : j1.avoirPieces()) {
-//         j1.retirerPiece(p);
-//     }
-//     for (auto&& p : j2.avoirPieces()) {
-//         j2.retirerPiece(p);
-//     }
+    QVBoxLayout* centralBox = new QVBoxLayout(menu);
 
-//     QWidget* menu = new QWidget;
-//     menu->setFixedSize(500, 200);
-//     QMainWindow::setFixedSize(500, 200);
+    QLabel* finished = new QLabel(menu);
+    finished->setText(tr("!!!   Partie Terminé    !!!"));
+    finished->setAlignment(Qt::AlignCenter);
 
-//     QVBoxLayout* centralBox = new QVBoxLayout(menu);
 
-//     QLabel* finished = new QLabel(menu);
-//     finished->setText(tr("!!!   Partie Terminé    !!!"));
-//     finished->setAlignment(Qt::AlignCenter);
+    QLabel* winner = new QLabel();
+    std::string loserPlayer = manager_->getPlayers().at(manager_->getTurnColor()); // lose
+    winner->setText(QString::fromStdString("LOSER => ") + QString::fromStdString(loserPlayer));
+    winner->setAlignment(Qt::AlignCenter);
+    winner->setStyleSheet(tr("QLabel { background-color : gray ;}"));
+    winner->setFrameStyle(QFrame::Panel | QFrame::Sunken);
 
-//     centralBox->addWidget(finished);
-
-//     QLabel* winner = new QLabel();
-//     winner->setText(QString::fromStdString("GAGNANT    ::   ") + QString::fromStdString(autreJoueur->avoirNom()));
-//     winner->setAlignment(Qt::AlignCenter);
-//     winner->setStyleSheet(tr("QLabel { background-color : gray ;}"));
-//     winner->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-
-//     centralBox->addWidget(winner);
-
-//     setCentralWidget(menu);
+    centralBox->addWidget(finished);
+    centralBox->addWidget(winner);
+    setCentralWidget(menu);
 }

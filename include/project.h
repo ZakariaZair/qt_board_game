@@ -49,7 +49,6 @@ private:
     std::unique_ptr<Manager> manager_;
 
     LobbyOption lobbyOption_;
-    bool gameStarted_ = false;
 
     Ui::ProjetFinalEchecClass ui;
 };

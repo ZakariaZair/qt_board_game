@@ -28,11 +28,14 @@ namespace chess {
 
         void nextTurnColor();
         ClickState getState();
+        Color getTurnColor();
+        bool isCheckmate();
         std::map<Color, std::string> getPlayers();
     private:
         std::shared_ptr<Tile> selectedTile_;
        	std::map<Color, std::string> players_;
         ClickState state_;
         Color turnColor_ = Color::WHITE;
+        bool checkMate_ = false;
     };
 }

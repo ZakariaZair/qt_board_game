@@ -93,12 +93,13 @@ std::shared_ptr<Tile> Manager::getKingTile(Tiles board, Color color) {
 bool Manager::isKingCheck(Tiles board, int index) {
     bool simulationCheck = simulateSingleStepCheck(board, selectedTile_, board[index], turnColor_);
     std::shared_ptr<Tile> kingTile = getKingTile(board, turnColor_);
-    kingTile == selectedTile_ ? selectedTile_->checkRepresentation() : kingTile->checkRepresentation();
+    if (simulationCheck) kingTile == selectedTile_ ? selectedTile_->checkRepresentation() : kingTile->checkRepresentation();
     return simulationCheck;
 }
 
 bool Manager::isOpponentCheckmate(Tiles board) {
-    std::shared_ptr<Tile> kingTile = getKingTile(board, turnColor_ == Color::WHITE ? Color::BLACK : Color::WHITE);
+    Color opponentColor = turnColor_ == Color::WHITE ? Color::BLACK : Color::WHITE;
+    std::shared_ptr<Tile> kingTile = getKingTile(board, opponentColor);
     std::set<std::shared_ptr<Tile>> opponentValidTiles = {};
     for (auto tile: board) {
         if (tile->getPieceAtTile() == nullptr) continue;
@@ -109,31 +110,37 @@ bool Manager::isOpponentCheckmate(Tiles board) {
 
     if (opponentValidTiles.find(kingTile) != opponentValidTiles.end()) {
         kingTile->checkRepresentation();
-        Tiles kingValidTiles = kingTile->getPieceAtTile()->getValidMoves(board, kingTile->getPos());
+
         bool canMoveToSafety = false;
-        for (auto kingValidTile: kingValidTiles) if (opponentValidTiles.find(kingValidTile) == opponentValidTiles.end()) canMoveToSafety = true;
-        if (!canMoveToSafety) {
-            std::cout << "cannot move to safety !!!" << std::endl;
-            // bool canBeProtected = false;
-            // for (auto kingValidTile: kingValidTiles) if (opponentValidTiles.find(kingTile) != opponentValidTiles.end()) ;
-            // if (can)
+        Tiles kingValidTiles = kingTile->getPieceAtTile()->getValidMoves(board, kingTile->getPos());
+        for (auto kingValidTile: kingValidTiles) if (!simulateSingleStepCheck(board, kingTile, kingValidTile, opponentColor)) canMoveToSafety = true;
+
+        bool canBeProtected = false;
+        for (auto tile: board) {
+            if (tile->getPieceAtTile() == nullptr) continue;
+            if (tile->getPieceAtTile()->getSymbol() == "♔") continue;
+            if (tile->getPieceAtTile()->getColor() == turnColor_) continue;
+            Tiles currentPieceValidTiles = tile->getPieceAtTile()->getValidMoves(board, tile->getPos());
+            for (auto currentPieceValidTile: currentPieceValidTiles) {
+                if (!simulateSingleStepCheck(board, tile, currentPieceValidTile, opponentColor)) canBeProtected = true;
+            }
         }
+        if (!canMoveToSafety && !canBeProtected) checkMate_ = true;
         return true;
     }
     return false;
 }
 
 bool Manager::simulateSingleStepCheck(Tiles board, std::shared_ptr<Tile> sourceTile, std::shared_ptr<Tile> targetTile, Color color) {
-    std::shared_ptr<Tile> kingTile = getKingTile(board, color);
-    std::set<std::shared_ptr<Tile>> opponentValidTiles = {};
-
     Tile simulationTempTile = Tile();
     simulationTempTile.setPieceAtTile(targetTile->getPieceAtTile());
     targetTile->setPieceAtTile(sourceTile->getPieceAtTile());
 
+    std::shared_ptr<Tile> kingTile = getKingTile(board, color);
+    std::set<std::shared_ptr<Tile>> opponentValidTiles = {};
     for (auto tile: board) {
         if (tile->getPieceAtTile() == nullptr) continue;
-        if (tile->getPieceAtTile()->getColor() == turnColor_) continue;
+        if (tile->getPieceAtTile()->getColor() == color) continue;
         Tiles currentPieceValidTiles = tile->getPieceAtTile()->getValidMoves(board, tile->getPos());
         opponentValidTiles.insert(currentPieceValidTiles.begin(), currentPieceValidTiles.end());
     }
@@ -151,7 +158,7 @@ void Manager::toggleValidMoves(Tiles board) {
     for (auto tile: board) {
         if (tile->getPieceAtTile() == nullptr) continue;
         Tiles currentPieceValidTiles = tile->getPieceAtTile()->getValidMoves(board, tile->getPos());
-        for (auto& currentPieceValidTile: currentPieceValidTiles) currentPieceValidTile->validMoveRepresentation();
+        for (auto currentPieceValidTile: currentPieceValidTiles) currentPieceValidTile->validMoveRepresentation();
     }
 }
 
@@ -161,7 +168,7 @@ void Manager::toggleValidMoves(Tiles board, Color color) {
         if (tile->getPieceAtTile()->getColor() != color) continue;
         tile->selectedRepresentation();
         Tiles currentPieceValidTiles = tile->getPieceAtTile()->getValidMoves(board, tile->getPos());
-        for (auto& currentPieceValidTile: currentPieceValidTiles) currentPieceValidTile->validMoveRepresentation();
+        for (auto currentPieceValidTile: currentPieceValidTiles) currentPieceValidTile->validMoveRepresentation();
     }
 }
 
@@ -170,7 +177,7 @@ void Manager::resetToggle(Tiles board) {
         if (tile->getPieceAtTile() == nullptr) continue;
         tile->refreshRepresentation();
         Tiles currentPieceValidTiles = tile->getPieceAtTile()->getValidMoves(board, tile->getPos());
-        for (auto& currentPieceValidTile: currentPieceValidTiles) currentPieceValidTile->refreshRepresentation();
+        for (auto currentPieceValidTile: currentPieceValidTiles) currentPieceValidTile->refreshRepresentation();
     }
 }
 
@@ -180,6 +187,15 @@ void Manager::resetToggle(Tiles board, Color color){
         if (tile->getPieceAtTile()->getColor() != color) continue;
         tile->refreshRepresentation();
         Tiles currentPieceValidTiles = tile->getPieceAtTile()->getValidMoves(board, tile->getPos());
-        for (auto& currentPieceValidTile: currentPieceValidTiles) currentPieceValidTile->refreshRepresentation();
+        for (auto currentPieceValidTile: currentPieceValidTiles) currentPieceValidTile->refreshRepresentation();
     }
+}
+
+
+Color Manager::getTurnColor() {
+    return turnColor_;
+}
+
+bool Manager::isCheckmate() {
+    return checkMate_;
 }
