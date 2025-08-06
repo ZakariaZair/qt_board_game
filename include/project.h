@@ -28,14 +28,7 @@ public:
     virtual void mousePressEvent(QMouseEvent* event) override;
     virtual void keyPressEvent(QKeyEvent* event) override;
     virtual void keyReleaseEvent(QKeyEvent* event) override;
-    // virtual void mouseReleaseEvent(QMouseEvent* event) override;
 
-    // void couleurBoardNormal();
-    // void couleurBoardEchec();
-
-    // void option1();
-    // void option2();
-    // void option3();
     void nextTurn();
 
 private slots:
@@ -47,8 +40,6 @@ private slots:
 private:
     Tiles board_;
     std::unique_ptr<Manager> manager_;
-
     LobbyOption lobbyOption_;
-
     Ui::ProjetFinalEchecClass ui;
 };

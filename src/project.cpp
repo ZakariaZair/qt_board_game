@@ -13,14 +13,13 @@
 #include <QBoxLayout>
 
 // C++ Lib
+#include <cstddef>
 #include <memory>
 #include <utility>
-
 
 // ../include path
 #include "project.h"
 #include "chess_definition.h"
-#include "manager.h"
 #include "rook.h"
 
 namespace graphicsInterface {
@@ -98,16 +97,8 @@ void Project::setUp() {
     QRadioButton* option1 = new QRadioButton(menu);
     option1->setText(tr("Default"));
     buttons->addWidget(option1);
-    // QRadioButton* option2 = new QRadioButton(menu);
-    // option2->setText(tr("Random"));
-    // buttons->addWidget(option2);
-    // QRadioButton* option3 = new QRadioButton(menu);
-    // option3->setText(tr("Endgame"));
-    // buttons->addWidget(option3);
 
     connect(option1, SIGNAL(pressed()), this, SLOT(defaulting()));
-    // connect(option2, SIGNAL(pressed()), this, SLOT(changeOption2()));
-    // connect(option3, SIGNAL(pressed()), this, SLOT(changeOption3()));
     connect(startButton, SIGNAL(pressed()), this, SLOT(start()));
 
     setCentralWidget(menu);
