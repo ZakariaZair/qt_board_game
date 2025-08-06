@@ -58,11 +58,12 @@ void Manager::moveToTarget(Tiles board, std::pair<int, int> clic) {
     board[targetIndex]->setPieceAtTile(selectedTile_->getPieceAtTile());
     board[targetIndex]->refreshRepresentation();
     selectedTile_->refreshRepresentation();
+    selectedTile_.reset();
     state_ = ClickState::SELECTION;
+
     isOpponentCheckmate(board);
 
     nextTurnColor();
-    selectedTile_.reset();
 }
 
 void Manager::removeRiskyMoves(Tiles board, Tiles& validTiles) {
@@ -164,8 +165,21 @@ void Manager::toggleValidMoves(Tiles board, Color color) {
     }
 }
 
-void Manager::resetToggles(Tiles board){
+void Manager::resetToggle(Tiles board) {
     for (auto tile: board) {
+        if (tile->getPieceAtTile() == nullptr) continue;
         tile->refreshRepresentation();
+        Tiles currentPieceValidTiles = tile->getPieceAtTile()->getValidMoves(board, tile->getPos());
+        for (auto& currentPieceValidTile: currentPieceValidTiles) currentPieceValidTile->refreshRepresentation();
+    }
+}
+
+void Manager::resetToggle(Tiles board, Color color){
+    for (auto tile: board) {
+        if (tile->getPieceAtTile() == nullptr) continue;
+        if (tile->getPieceAtTile()->getColor() != color) continue;
+        tile->refreshRepresentation();
+        Tiles currentPieceValidTiles = tile->getPieceAtTile()->getValidMoves(board, tile->getPos());
+        for (auto& currentPieceValidTile: currentPieceValidTiles) currentPieceValidTile->refreshRepresentation();
     }
 }

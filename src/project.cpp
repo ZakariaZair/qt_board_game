@@ -170,8 +170,12 @@ void Project::keyPressEvent(QKeyEvent* event) {
 }
 
 void Project::keyReleaseEvent(QKeyEvent* event) {
-    if (event->key() == Qt::Key_R || event->key() == Qt::Key_B || event->key() == Qt::Key_W) {
-        manager_->resetToggles(board_);
+    if (event->key() == Qt::Key_R) {
+        manager_->resetToggle(board_);
+    } else if (event->key() == Qt::Key_W) {
+        manager_->resetToggle(board_, Color::WHITE);
+    } else if (event->key() == Qt::Key_B) {
+        manager_->resetToggle(board_, Color::BLACK);
     }
 }
 

@@ -23,7 +23,8 @@ namespace chess {
 
         void toggleValidMoves(Tiles board);
         void toggleValidMoves(Tiles board, Color color);
-        void resetToggles(Tiles board);
+        void resetToggle(Tiles board);
+        void resetToggle(Tiles board, Color color);
 
         void nextTurnColor();
         ClickState getState();
