@@ -12,11 +12,14 @@ namespace chess {
        	Manager(std::map<Color, std::string> players);
         void addPieceToTile(int x, int y, std::unique_ptr<Piece>& piece, Tiles board);
         void selectTile(Tiles board, std::pair<int, int> clic);
-        void move(Tiles board, std::pair<int, int> clic);
+        void moveToTarget(Tiles board, std::pair<int, int> clic);
         void removeRiskyMoves(Tiles board, Tiles& validTiles);
 
         bool isKingCheck(Tiles board, int index);
-        bool isOpponentKingCheck(Tiles board);
+        bool isOpponentCheckmate(Tiles board);
+        bool simulateSingleStepCheck(Tiles board, std::shared_ptr<Tile> sourceTile, std::shared_ptr<Tile> targetTile, Color color);
+
+        std::shared_ptr<Tile> getKingTile(Tiles board, Color color);
 
         void toggleValidMoves(Tiles board);
         void toggleValidMoves(Tiles board, Color color);

@@ -40,9 +40,9 @@ void Manager::selectTile(Tiles board, std::pair<int, int> clic) {
     for (std::shared_ptr<Tile> tile : validTiles) tile->validMoveRepresentation();
 }
 
-void Manager::move(Tiles board, std::pair<int, int> clic) {
-    int index = clic.first*8 + clic.second;
-    if (board[index] == selectedTile_) return;
+void Manager::moveToTarget(Tiles board, std::pair<int, int> clic) {
+    int targetIndex = clic.first*8 + clic.second;
+    if (board[targetIndex] == selectedTile_) return;
     selectedTile_->refreshRepresentation();
 
     Tiles validTiles = selectedTile_->getPieceAtTile()->getValidMoves(board, selectedTile_->getPos());
@@ -51,15 +51,15 @@ void Manager::move(Tiles board, std::pair<int, int> clic) {
     };
     for (std::shared_ptr<Tile> tile : validTiles) tile->refreshRepresentation();
     bool isValid = false;
-    for (std::shared_ptr<Tile> tile : validTiles) if (board[index] == tile) isValid = true;
+    for (std::shared_ptr<Tile> tile : validTiles) if (board[targetIndex] == tile) isValid = true;
     if (!isValid) {state_ = ClickState::SELECTION; return;}
 
-    if (isKingCheck(board, index)) {state_ = ClickState::SELECTION; return;}
-    board[index]->setPieceAtTile(selectedTile_->getPieceAtTile());
-    board[index]->refreshRepresentation();
+    if (isKingCheck(board, targetIndex)) {state_ = ClickState::SELECTION; return;}
+    board[targetIndex]->setPieceAtTile(selectedTile_->getPieceAtTile());
+    board[targetIndex]->refreshRepresentation();
     selectedTile_->refreshRepresentation();
     state_ = ClickState::SELECTION;
-    isOpponentKingCheck(board);
+    isOpponentCheckmate(board);
 
     nextTurnColor();
     selectedTile_.reset();
@@ -83,37 +83,24 @@ void Manager::removeRiskyMoves(Tiles board, Tiles& validTiles) {
     }
 }
 
-bool Manager::isKingCheck(Tiles board, int index) {
-    Tile simulationTempTile = Tile();
-    simulationTempTile.setPieceAtTile(board[index]->getPieceAtTile());
-    board[index]->setPieceAtTile(selectedTile_->getPieceAtTile());
-
+std::shared_ptr<Tile> Manager::getKingTile(Tiles board, Color color) {
     std::shared_ptr<Tile> kingTile;
-    std::set<std::shared_ptr<Tile>> opponentValidTiles = {};
-    for (auto tile: board) {
-        if (tile->getPieceAtTile() == nullptr) continue;
-        if (tile->getPieceAtTile()->getSymbol() == "♔" && tile->getPieceAtTile()->getColor() == turnColor_) kingTile = tile;
-        if (tile->getPieceAtTile()->getColor() == turnColor_) continue;
-        Tiles currentPieceValidTiles = tile->getPieceAtTile()->getValidMoves(board, tile->getPos());
-        opponentValidTiles.insert(currentPieceValidTiles.begin(), currentPieceValidTiles.end());
-    }
-
-    selectedTile_->setPieceAtTile(board[index]->getPieceAtTile());
-    if (simulationTempTile.getPieceAtTile() != nullptr) board[index]->setPieceAtTile(simulationTempTile.getPieceAtTile());
-
-    if (opponentValidTiles.find(kingTile) != opponentValidTiles.end()) {
-        kingTile->checkRepresentation();
-        return true;
-    }
-    return false;
+    for (auto tile: board) if (tile->getPieceAtTile() != nullptr && tile->getPieceAtTile()->getSymbol() == "♔" && tile->getPieceAtTile()->getColor() == color) kingTile = tile;
+    return kingTile;
 }
 
-bool Manager::isOpponentKingCheck(Tiles board) {
-    std::shared_ptr<Tile> kingTile;
+bool Manager::isKingCheck(Tiles board, int index) {
+    bool simulationCheck = simulateSingleStepCheck(board, selectedTile_, board[index], turnColor_);
+    std::shared_ptr<Tile> kingTile = getKingTile(board, turnColor_);
+    kingTile == selectedTile_ ? selectedTile_->checkRepresentation() : kingTile->checkRepresentation();
+    return simulationCheck;
+}
+
+bool Manager::isOpponentCheckmate(Tiles board) {
+    std::shared_ptr<Tile> kingTile = getKingTile(board, turnColor_ == Color::WHITE ? Color::BLACK : Color::WHITE);
     std::set<std::shared_ptr<Tile>> opponentValidTiles = {};
     for (auto tile: board) {
         if (tile->getPieceAtTile() == nullptr) continue;
-        if (tile->getPieceAtTile()->getSymbol() == "♔" && tile->getPieceAtTile()->getColor() != turnColor_) kingTile = tile;
         if (tile->getPieceAtTile()->getColor() != turnColor_) continue;
         Tiles currentPieceValidTiles = tile->getPieceAtTile()->getValidMoves(board, tile->getPos());
         opponentValidTiles.insert(currentPieceValidTiles.begin(), currentPieceValidTiles.end());
@@ -126,10 +113,34 @@ bool Manager::isOpponentKingCheck(Tiles board) {
         for (auto kingValidTile: kingValidTiles) if (opponentValidTiles.find(kingValidTile) == opponentValidTiles.end()) canMoveToSafety = true;
         if (!canMoveToSafety) {
             std::cout << "cannot move to safety !!!" << std::endl;
-            // bool canProtect = false;
+            // bool canBeProtected = false;
             // for (auto kingValidTile: kingValidTiles) if (opponentValidTiles.find(kingTile) != opponentValidTiles.end()) ;
             // if (can)
         }
+        return true;
+    }
+    return false;
+}
+
+bool Manager::simulateSingleStepCheck(Tiles board, std::shared_ptr<Tile> sourceTile, std::shared_ptr<Tile> targetTile, Color color) {
+    std::shared_ptr<Tile> kingTile = getKingTile(board, color);
+    std::set<std::shared_ptr<Tile>> opponentValidTiles = {};
+
+    Tile simulationTempTile = Tile();
+    simulationTempTile.setPieceAtTile(targetTile->getPieceAtTile());
+    targetTile->setPieceAtTile(sourceTile->getPieceAtTile());
+
+    for (auto tile: board) {
+        if (tile->getPieceAtTile() == nullptr) continue;
+        if (tile->getPieceAtTile()->getColor() == turnColor_) continue;
+        Tiles currentPieceValidTiles = tile->getPieceAtTile()->getValidMoves(board, tile->getPos());
+        opponentValidTiles.insert(currentPieceValidTiles.begin(), currentPieceValidTiles.end());
+    }
+
+    sourceTile->setPieceAtTile(targetTile->getPieceAtTile());
+    if (simulationTempTile.getPieceAtTile() != nullptr) targetTile->setPieceAtTile(simulationTempTile.getPieceAtTile());
+
+    if (opponentValidTiles.find(kingTile) != opponentValidTiles.end()) {
         return true;
     }
     return false;

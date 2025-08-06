@@ -148,7 +148,7 @@ void Project::mousePressEvent(QMouseEvent* event) {
             manager_->selectTile(board_, {clicX, clicY});
             break;
         case ClickState::NORMAL_MOVE:
-            manager_->move(board_, {clicX, clicY});
+            manager_->moveToTarget(board_, {clicX, clicY});
             break;
         case ClickState::RISKKING:
             // manager_->selectRescueTiles(board_, {clicX, clicY});
