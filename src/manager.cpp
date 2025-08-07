@@ -62,7 +62,6 @@ void Manager::moveToTarget(Tiles board, std::pair<int, int> clic) {
     state_ = ClickState::SELECTION;
 
     isOpponentCheckmate(board);
-
     nextTurnColor();
 }
 
@@ -108,24 +107,24 @@ bool Manager::isOpponentCheckmate(Tiles board) {
         opponentValidTiles.insert(currentPieceValidTiles.begin(), currentPieceValidTiles.end());
     }
 
+    bool canMoveToSafety = false;
+    Tiles kingValidTiles = kingTile->getPieceAtTile()->getValidMoves(board, kingTile->getPos());
+    for (auto kingValidTile: kingValidTiles) if (!simulateSingleStepCheck(board, kingTile, kingValidTile, opponentColor)) canMoveToSafety = true;
+
+    bool canBeProtected = false;
+    for (auto tile: board) {
+        if (tile->getPieceAtTile() == nullptr) continue;
+        if (tile->getPieceAtTile()->getSymbol() == "♔") continue;
+        if (tile->getPieceAtTile()->getColor() == turnColor_) continue;
+        Tiles currentPieceValidTiles = tile->getPieceAtTile()->getValidMoves(board, tile->getPos());
+        for (auto currentPieceValidTile: currentPieceValidTiles) {
+            if (!simulateSingleStepCheck(board, tile, currentPieceValidTile, opponentColor)) canBeProtected = true;
+        }
+    }
+    if (!canMoveToSafety && !canBeProtected) checkMate_ = true;
+
     if (opponentValidTiles.find(kingTile) != opponentValidTiles.end()) {
         kingTile->checkRepresentation();
-
-        bool canMoveToSafety = false;
-        Tiles kingValidTiles = kingTile->getPieceAtTile()->getValidMoves(board, kingTile->getPos());
-        for (auto kingValidTile: kingValidTiles) if (!simulateSingleStepCheck(board, kingTile, kingValidTile, opponentColor)) canMoveToSafety = true;
-
-        bool canBeProtected = false;
-        for (auto tile: board) {
-            if (tile->getPieceAtTile() == nullptr) continue;
-            if (tile->getPieceAtTile()->getSymbol() == "♔") continue;
-            if (tile->getPieceAtTile()->getColor() == turnColor_) continue;
-            Tiles currentPieceValidTiles = tile->getPieceAtTile()->getValidMoves(board, tile->getPos());
-            for (auto currentPieceValidTile: currentPieceValidTiles) {
-                if (!simulateSingleStepCheck(board, tile, currentPieceValidTile, opponentColor)) canBeProtected = true;
-            }
-        }
-        if (!canMoveToSafety && !canBeProtected) checkMate_ = true;
         return true;
     }
     return false;
