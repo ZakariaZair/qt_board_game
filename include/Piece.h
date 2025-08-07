@@ -5,6 +5,7 @@
 #include <vector>
 #include <utility>
 #include "chess_definition.h"
+#include "tile.h"
 
 namespace chess {
     class Piece {

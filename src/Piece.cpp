@@ -1,8 +1,4 @@
-#include <iostream>
 #include "piece.h"
-#include "king.h"
-#include "tile.h"
-#include "chess_definition.h"
 #include <cstddef>
 #include <utility>
 using namespace chess;
